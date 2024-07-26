@@ -36,8 +36,6 @@ export default {
 		}
 		// #endif
 		this.setOpenShare();
-		
-		console.log(this.isDiy, this.loading);
 	},
 	onShow() {
 		this.getVersion(0);
@@ -46,6 +44,7 @@ export default {
 		}
 	},
 	onHide() {
+		this.$Cache.clear('agent_id');
 	},
 	methods: {
 		// 绑定员工关系

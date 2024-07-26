@@ -268,3 +268,13 @@ export function getSystemVersion() {
 		noAuth: true
 	});
 }
+
+/**
+ * iframe登录
+ * 
+ */
+export function remoteRegister(data) {
+	return request.get(`remote_register`, data, {
+		noAuth: true
+	});
+}

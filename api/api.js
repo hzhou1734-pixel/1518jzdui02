@@ -432,12 +432,3 @@ export function getOpenAdv(data) {
 		noAuth: true
 	});
 }
-
-/**
- * 获取版权信息
- */
-export function getCrmebCopyRight() {
-	return request.get('copyright', {}, {
-		noAuth: true
-	})
-}

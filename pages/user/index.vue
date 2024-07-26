@@ -391,7 +391,7 @@
 				member_style: 1,
 				my_banner_status: 1,
 				is_diy: uni.getStorageSync('is_diy'),
-				copyRightPic: '/static/images/hb-logo.png', //版权图片
+				copyRightPic: '/static/images/support.png', //版权图片
 			}
 		},
 		onLoad(option) {
@@ -1297,7 +1297,7 @@
 		}
 
 		.support {
-			width: 270rpx;
+			width: 219rpx;
 			height: 74rpx;
 			margin: 54rpx auto;
 			display: block;

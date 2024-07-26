@@ -20,6 +20,10 @@ Vue.component('pageLoading', pageLoading)
 Vue.component('easyLoadimage', easyLoadimage)
 import ActivePermission from './libs/permission.js';
 Vue.prototype.$permission = ActivePermission;
+import {
+	Debounce
+} from '@/utils/validate.js'
+Vue.prototype.$Debounce = Debounce
 // #ifdef H5
 import {
 	parseQuery
@@ -29,8 +33,6 @@ import {
 	SPREAD
 } from './config/cache';
 Vue.prototype.$wechat = Auth;
-
-
 
 let cookieName = "VCONSOLE",
 	query = parseQuery(),

@@ -1,7 +1,8 @@
 import {
 	HTTP_REQUEST_URL,
 	HEADER,
-	TOKENNAME
+	TOKENNAME,
+	TIMEOUT
 } from '@/config/app';
 import {
 	toLogin,
@@ -40,6 +41,7 @@ function baseRequest(url, method, data, {
 			method: method || 'GET',
 			header: header,
 			data: data || {},
+			timeout: TIMEOUT,
 			success: (res) => {
 				if (noVerify)
 					reslove(res.data, res);
