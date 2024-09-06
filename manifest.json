@@ -1,7 +1,7 @@
 {
-    "name" : "CRMEB标准版",
+    "name" : "海拔单商户",
     "appid" : "__UNI__A3F1ED4",
-    "description" : "CRMEB标准版",
+    "description" : "海拔单商户",
     "versionName" : "5.4.0",
     "versionCode" : 540,
     "transformPx" : false,

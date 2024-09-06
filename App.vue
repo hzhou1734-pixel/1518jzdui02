@@ -5,7 +5,7 @@ import { getShopConfig, silenceAuth, getSystemVersion, basicConfig, remoteRegist
 import Auth from '@/libs/wechat.js';
 import Routine from './libs/routine.js';
 import { silenceBindingSpread } from '@/utils';
-import { colorChange, getCrmebCopyRight } from '@/api/api.js';
+import { colorChange, getHaibaCopyRight } from '@/api/api.js';
 import { getLangJson, getLangVersion } from '@/api/user.js';
 import { mapGetters } from 'vuex';
 import colors from '@/mixins/color.js';
@@ -249,12 +249,11 @@ export default {
 		// }
 		// #endif
 		// #ifdef H5
-		// 添加crmeb chat 统计
 		var __s = document.createElement('script');
 		__s.src = `${HTTP_REQUEST_URL}/api/get_script`;
 		document.head.appendChild(__s);
 		// #endif
-		getCrmebCopyRight().then((res) => {
+		getHaibaCopyRight().then((res) => {
 			uni.setStorageSync('copyRight', res.data);
 		});
 		// #ifdef MP
