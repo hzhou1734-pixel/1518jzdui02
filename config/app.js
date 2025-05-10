@@ -2,7 +2,7 @@ module.exports = {
 	// 小程序 / APP请求配置
 	// #ifdef MP || APP-PLUS
 	// 请求域名 格式： https://您的域名
-	HTTP_REQUEST_URL: `https://demo.xxxx.com`,
+	HTTP_REQUEST_URL: `https://demo.crmeb.com`,
 	// #endif
 
 	// H5请求配置
@@ -10,10 +10,6 @@ module.exports = {
 	// H5接口是浏览器地址，非单独部署不用修改
 	HTTP_REQUEST_URL: window.location.protocol + "//" + window.location.host,
 	// #endif 
-
-
-	// 后台版本号
-	SYSTEM_VERSION: 100,
 
 	// 以下配置在不做二开的前提下,不需要做任何的修改
 	HEADER: {

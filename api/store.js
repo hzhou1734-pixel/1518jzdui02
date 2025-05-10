@@ -223,7 +223,7 @@ export function getCodeApi() {
 /**
  * 获取代理商表单信息
  */
-export function getGoodsDetails() {
+export function getHistoryData() {
 	return request.get("agent/apply/info", {}, {
 		noAuth: true
 	});
@@ -268,4 +268,31 @@ export function getVisitList(data) {
  */
 export function deleteVisitList(data) {
 	return request.delete('user/visit', data)
+}
+
+/**
+ * 申请分销员详情接口
+ *
+ */
+export function userSpreadInfo() {
+	return request.get("user/spread/apply/info");
+}
+
+/**
+ * 分销员申请
+ * @param data
+ * 
+ */
+export function spreadCreateApi(id, data) {
+	return request.post(`user/spread/apply/${id}`, data);
+}
+
+/**
+ * 到手价获取
+ * 
+ */
+export function realPrice(id, unique) {
+	return request.get(`product/real_price/${id}/${unique}`, {}, {
+		noAuth: true
+	});
 }

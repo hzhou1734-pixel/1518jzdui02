@@ -1030,5 +1030,29 @@ export default {
 			}
 		}
 	},
-
+	// 计算头部自定义导航高度；
+	getWXStatusHeight() {
+		// 获取距上
+		const barTop = uni.getSystemInfoSync().statusBarHeight;
+		// #ifdef MP
+		// 获取胶囊按钮位置信息
+		const menuButtonInfo = wx.getMenuButtonBoundingClientRect() || 0
+		// 获取导航栏高度
+		const barHeight = menuButtonInfo.height + (menuButtonInfo.top - barTop) * 2
+		let barWidth = menuButtonInfo.width
+		// #endif
+		// #ifndef MP
+		// 获取导航栏高度
+		const barHeight = parseInt(barTop) + 10;
+		let barWidth = '100%'
+		// #endif
+		return {
+			// #ifdef MP
+			menuButtonInfo,
+			// #endif
+			barHeight,
+			barTop,
+			barWidth
+		}
+	},
 }

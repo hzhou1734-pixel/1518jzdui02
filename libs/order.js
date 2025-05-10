@@ -1,10 +1,10 @@
 let app = getApp()
 
 export function goShopDetail(item, uid) {
-	return new Promise(resolve => {
+	return new Promise((resolve, reject) => {
 		if (item.activity && item.activity.type === "1") {
 			uni.navigateTo({
-				url: `/pages/activity/goods_seckill_details/index?id=${item.activity.id}&time=${item.activity.time}&status=1`
+				url: `/pages/activity/goods_seckill_details/index?id=${item.activity.id}&time_id=${item.activity.time_id}`
 			})
 		} else if (item.activity && item.activity.type === "2") {
 			uni.navigateTo({

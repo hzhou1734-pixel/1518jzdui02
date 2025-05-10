@@ -1,11 +1,11 @@
 <script>
 import { checkLogin } from './libs/login';
-import { HTTP_REQUEST_URL, SYSTEM_VERSION } from './config/app';
+import { HTTP_REQUEST_URL } from './config/app';
 import { getShopConfig, silenceAuth, getSystemVersion, basicConfig, remoteRegister } from '@/api/public';
 import Auth from '@/libs/wechat.js';
 import Routine from './libs/routine.js';
 import { silenceBindingSpread } from '@/utils';
-import { colorChange, getHaibaCopyRight } from '@/api/api.js';
+import { colorChange, getCrmebCopyRight } from '@/api/api.js';
 import { getLangJson, getLangVersion } from '@/api/user.js';
 import { mapGetters } from 'vuex';
 import colors from '@/mixins/color.js';
@@ -117,33 +117,20 @@ export default {
 		colorChange('color_change').then((res) => {
 			uni.setStorageSync('is_diy', res.data.is_diy);
 			uni.$emit('is_diy', res.data.is_diy);
+			const themeMap = {
+				1: 'blue',
+				2: 'green',
+				3: 'red',
+				4: 'pink',
+				5: 'orange'
+			};
+			
+			const status = res.data.status;
+			const themeKey = themeMap[status] || 'red'; // 默认使用红色
+			const selectedTheme = themeList[themeKey];
 			uni.setStorageSync('color_status', res.data.status);
-			switch (res.data.status) {
-				case 1:
-					uni.setStorageSync('viewColor', themeList.blue);
-					uni.$emit('ok', themeList.blue, res.data.status);
-					break;
-				case 2:
-					uni.setStorageSync('viewColor', themeList.green);
-					uni.$emit('ok', themeList.green, res.data.status);
-					break;
-				case 3:
-					uni.setStorageSync('viewColor', themeList.red);
-					uni.$emit('ok', themeList.red, res.data.status);
-					break;
-				case 4:
-					uni.setStorageSync('viewColor', themeList.pink);
-					uni.$emit('ok', themeList.pink, res.data.status);
-					break;
-				case 5:
-					uni.setStorageSync('viewColor', themeList.orange);
-					uni.$emit('ok', themeList.orange, res.data.status);
-					break;
-				default:
-					uni.setStorageSync('viewColor', themeList.red);
-					uni.$emit('ok', themeList.red, res.data.status);
-					break;
-			}
+			uni.setStorageSync('viewColor', selectedTheme);
+			uni.$emit('ok', selectedTheme, status);
 		});
 		getLangVersion().then((res) => {
 			let version = res.data.version;
@@ -253,23 +240,9 @@ export default {
 		__s.src = `${HTTP_REQUEST_URL}/api/get_script`;
 		document.head.appendChild(__s);
 		// #endif
-		getHaibaCopyRight().then((res) => {
+		getCrmebCopyRight().then((res) => {
 			uni.setStorageSync('copyRight', res.data);
 		});
-		// #ifdef MP
-		getSystemVersion().then((res) => {
-			if (res.data.version_code != SYSTEM_VERSION) {
-				uni.showModal({
-					title: '警告',
-					content: '前后端版本不一致！',
-					success: function (res) {
-						if (res.confirm) {
-						}
-					}
-				});
-			}
-		});
-		// #endif
 	},
 	// #ifdef H5
 	onHide() {
@@ -326,7 +299,8 @@ export default {
 @import 'static/iconfont/iconfont.css';
 @import 'static/css/guildford.css';
 @import 'static/css/style.scss';
-
+@import 'static/css/unocss.css';
+@import 'static/fonts/font.scss';
 view {
 	box-sizing: border-box;
 }

@@ -18,8 +18,8 @@
 				<div class="line"></div>
 				<div class="name acea-row row-center-wrapper">
 					{{$t(`剩余`)}}
-					<CountDown :is-day="false" :tip-text="' '" :day-text="' '" :hour-text="' : '" :minute-text="' : '"
-						:second-text="' '" :datatime="pinkT.stop_time"></CountDown>
+					<CountDown :is-day="false" :tip-text="' '" :day-text="' '" hourText=" : " minute-text=" : "
+						second-text="" :datatime="pinkT.stop_time"></CountDown>
 					{{$t(`结束`)}}
 				</div>
 				<div class="line"></div>
@@ -82,7 +82,7 @@
 				</div>
 			</div>
 		</div>
-		<product-window :attr="attr" :limitNum="storeCombination.once_num" :iSbnt="1" @myevent="onMyEvent" @ChangeAttr="ChangeAttr"
+		<product-window :attr="attr" :limitNum="storeCombination ? storeCombination.once_num : 0" :iSbnt="1" @myevent="onMyEvent" @ChangeAttr="ChangeAttr"
 			@ChangeCartNum="ChangeCartNum" @iptCartNum="iptCartNum" @attrVal="attrVal" @goCat="goPay"></product-window>
 		<!-- 分享按钮 -->
 		<view class="generate-posters acea-row row-middle" :class="posters ? 'on' : ''">
@@ -235,7 +235,6 @@
 				handler: function(newV, oldV) {
 					if (newV) {
 						this.userInfo = newV;
-						app.globalData.openPages = '/pages/activity/goods_combination_status/index?id=' + this.pinkId;
 					}
 				},
 				deep: true
@@ -269,7 +268,7 @@
 			let that = this;
 			return {
 				title: that.$t(`您的好友`) + that.userInfo.nickname + this.$t(`邀请您参团`) + that.storeCombination.title,
-				path: app.globalData.openPages,
+				path: '/pages/activity/goods_combination_status/index?id=' + that.pinkId,
 				imageUrl: that.storeCombination.image
 			};
 		},
@@ -319,7 +318,6 @@
 			// 授权后回调
 			onLoadFun: function(e) {
 				this.userInfo = e;
-				app.globalData.openPages = '/pages/activity/goods_combination_status/index?id=' + this.pinkId;
 				this.getCombinationPink();
 			},
 			/**

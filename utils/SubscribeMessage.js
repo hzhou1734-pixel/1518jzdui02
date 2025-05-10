@@ -86,6 +86,16 @@ export function openRechargeSubscribe() {
 }
 
 /**
+ * 提现成功
+ */
+export function openRevenueSubscribe() {
+	let tmplIds = auth();
+	return subscribe([
+		tmplIds.revenue_received
+	]);
+}
+
+/**
  * 调起订阅界面
  * array tmplIds 模板id
  */

@@ -484,7 +484,6 @@
 			// #endif
 			if (options.hasOwnProperty('id')) {
 				this.id = options.id
-				// app.globalData.openPages = '/pages/activity/goods_combination_details/index?id=' + this.id + '&spid=' + this.userInfo.uid;
 				if (this.isLogin) {
 					this.combinationDetail();
 				} else {
@@ -858,9 +857,6 @@
 			// 授权后回调
 			onLoadFun: function(e) {
 				this.userInfo = e
-				app.globalData.openPages = '/pages/activity/goods_combination_details/index?id=' + this.id + '&spid=' +
-					e.uid;
-				// this.downloadFilePromotionCode();
 				this.combinationDetail();
 			},
 			selecAttr: function() {
@@ -1261,7 +1257,7 @@
 		onShareAppMessage() {
 			return {
 				title: this.storeInfo.title,
-				path: app.globalData.openPages,
+				path: '/pages/activity/goods_combination_details/index?id=' + this.id + '&spid=' + this.$store.state.app.uid,
 				imageUrl: this.storeInfo.image
 			};
 		}
@@ -1547,7 +1543,7 @@
 		z-index: 277;
 		border-top: 1rpx solid #f0f0f0;
 		height: 100rpx;
-		height: calc(100rpx+ constant(safe-area-inset-bottom)); ///兼容 IOS<11.2/
+		height: calc(100rpx + constant(safe-area-inset-bottom)); ///兼容 IOS<11.2/
 		height: calc(100rpx + env(safe-area-inset-bottom)); ///兼容 IOS>11.2/
 		background-color: rgba(255, 255, 255, 0.85);
 		backdrop-filter: blur(10px);

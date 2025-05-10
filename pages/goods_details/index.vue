@@ -46,13 +46,17 @@
 						<view class="wrapper">
 							<view class="share acea-row row-between row-bottom">
 								<view class="money font-color">
-									{{ $t(`￥`) }}
-									<text class="num" v-text="storeInfo.price || 0"></text>
-									<text v-if="storeInfo.spec_type">{{ $t(`起`) }}</text>
-									<text class="vip-money" v-if="storeInfo.vip_price && storeInfo.vip_price > 0 && storeInfo.is_vip == 1 && svip_price_open == 1">
-										{{ $t(`￥`) }}{{ storeInfo.vip_price }}
-									</text>
-									<image v-if="storeInfo.vip_price && storeInfo.vip_price > 0 && storeInfo.is_vip == 1 && svip_price_open == 1" src="../../static/images/svip.gif"></image>
+									<text class="text">{{ $t(`到手价`) }}</text>
+									<baseMoney class="mr-12" :money="realPriceData.real_price" symbolSize="24" integerSize="40" decimalSize="24" weight color="var(--view-theme)"></baseMoney>
+									<text class="text text--w111-333">{{ $t(`售价`) }}</text>
+									<baseMoney class="mr-12" :money="realPriceData.price" symbolSize="24" integerSize="24" decimalSize="24" weight color="#333"></baseMoney>
+									<view
+										class="vip-money"
+										v-if="storeInfo.vip_price && storeInfo.vip_price > 0 && storeInfo.is_vip == 1 && svip_price_open == 1 && realPriceData.user_is_member == 0"
+									>
+										<view class="svip-tag">SVIP</view>
+										<view class="">{{ $t(`￥`) }}{{ realPriceData.member_price }}</view>
+									</view>
 								</view>
 								<view class="iconfont icon-fenxiang" @click="listenerActionSheet"></view>
 							</view>
@@ -63,7 +67,7 @@
 								<text v-if="storeInfo.min_qty > 1">{{ $t(`起购`) }}{{ storeInfo.min_qty + storeInfo.unit_name }}</text>
 							</view>
 							<view class="label acea-row row-between-wrapper" style="padding-bottom: 20rpx">
-								<view class="delete-line">{{ $t(`划线价`) }} : {{ $t(`￥`) }}{{ storeInfo.ot_price || 0 }}</view>
+								<view class="delete-line">{{ $t(`￥`) }}{{ storeInfo.ot_price || 0 }}</view>
 								<view class="">
 									{{ $t(`库存`) }} : {{ storeInfo.stock || 0 }}
 									{{ $t(storeInfo.unit_name) || '' }}
@@ -72,6 +76,20 @@
 									{{ $t(`销量`) }} : {{ storeInfo.fsales || 0 }}
 									{{ $t(storeInfo.unit_name) || '' }}
 								</view>
+							</view>
+							<!-- 商品标签 -->
+							<view class="flex flex-wrap mt-24 p-x-15" v-if="storeInfo.label_list && storeInfo.label_list.length">
+								<BaseTag
+									:text="label.name"
+									:color="label.font_color"
+									:background="label.bg_color"
+									:borderColor="label.border_color"
+									:circle="label.border_color ? true : false"
+									:imgSrc="label.image"
+									size="middle"
+									v-for="(label, idx) in storeInfo.label_list"
+									:key="idx"
+								></BaseTag>
 							</view>
 							<view v-if="!is_money_level && storeInfo.vip_price && storeInfo.is_vip" class="svip acea-row row-between-wrapper">
 								<view class="">{{ $t(`开通“超级会员”立省`) }}{{ diff }}{{ $t(`元`) }}</view>
@@ -137,18 +155,54 @@
 							</view>
 						</view>
 						<view class="attribute acea-row row-between-wrapper" @click="selecAttr" v-if="attr.productAttr.length">
-							<view class="flex">
+							<view class="flex justify-between">
 								<view style="display: flex; align-items: center; width: 90%">
 									<view class="attr-txt">{{ attrTxt }}：</view>
 									<view class="atterTxt line1" style="width: 82%">{{ attrValue }}</view>
 								</view>
 								<view class="iconfont icon-jiantou"></view>
 							</view>
-							<view class="acea-row row-between-wrapper" style="margin-top: 7px; padding-left: 60px" v-if="skuArr.length > 1">
-								<view class="flexs">
+							<view class="acea-row row-between-wrapper attr-pics" v-if="skuArr.length">
+								<view class="flexs" v-show="storeInfo.attrPics.length">
+									<image :src="item" v-for="(item, index) in storeInfo.attrPics.slice(0, 4)" :key="index" class="attrImg"></image>
+								</view>
+								<view class="flexs" v-show="!storeInfo.attrPics.length">
 									<image :src="item.image" v-for="(item, index) in skuArr.slice(0, 4)" :key="index" class="attrImg"></image>
 								</view>
 								<view class="switchTxt">{{ $t(`共`) }}{{ skuArr.length }} {{ $t(`种规格可选`) }}</view>
+							</view>
+						</view>
+						<!-- 参数 -->
+						<view
+							v-if="(storeInfo.params_list && storeInfo.params_list.length) || (storeInfo.protection_list && storeInfo.protection_list.length)"
+							class="attribute acea-row row-between-wrapper"
+						>
+							<view v-if="storeInfo.params_list && storeInfo.params_list.length" class="flex justify-between card" @click="openModal('specs')">
+								<view style="display: flex; align-items: center; width: 90%">
+									<view>{{ $t(`参数`) }}：</view>
+									<view class="flex params-list line1" style="width: 82%">
+										<view class="item" v-for="(item, index) in storeInfo.params_list" :key="index">
+											<view class="name">{{ item.name }}/</view>
+											<view class="value">
+												{{ item.value }}
+											</view>
+										</view>
+									</view>
+								</view>
+								<view class="iconfont icon-jiantou"></view>
+							</view>
+							<view class="line" v-if="(storeInfo.params_list && storeInfo.params_list.length) && (storeInfo.protection_list && storeInfo.protection_list.length)"></view>
+							<view v-if="storeInfo.protection_list && storeInfo.protection_list.length" class="flex justify-between card" @click="openModal('protection')">
+								<view style="display: flex; align-items: center; width: 90%">
+									<view>{{ $t(`服务`) }}：</view>
+									<view class="flex params-list line1" style="width: 82%">
+										<view class="item" v-for="(item, index) in storeInfo.protection_list" :key="index">
+											<image class="w-30 h-30 mr-3" :src="item.image" mode=""></image>
+											<view class="name">{{ item.title }}</view>
+										</view>
+									</view>
+								</view>
+								<view class="iconfont icon-jiantou"></view>
 							</view>
 						</view>
 					</view>
@@ -219,14 +273,14 @@
 					<view class="uni-p-b-98"></view>
 				</scroll-view>
 			</view>
-			
+
 			<view class="footer acea-row row-between-wrapper" :class="{ eject: storeInfo.id }">
 				<!-- <button open-type="contact" hover-class='none' class='item'>
 						<view class='iconfont icon-kefu'></view>
 						<view>客服</view>
 					</button> -->
 
-				<navigator hover-class="none" class="item" open-type="switchTab" url="/pages/index/index">
+				<navigator v-if="!is_gift" hover-class="none" class="item" open-type="switchTab" url="/pages/index/index">
 					<view class="iconfont icon-shouye6"></view>
 					<view class="p_center">{{ $t(`首页`) }}</view>
 				</navigator>
@@ -240,6 +294,10 @@
 						<text class="num bg-color" v-if="parseFloat(CartCount) > 0">{{ CartCount || 0 }}</text>
 					</view>
 					<view class="p_center">{{ $t(`购物车`) }}</view>
+				</view>
+				<view v-if="is_gift" @click="goGift()" class="item">
+					<image class="gift-icon" src="@/static/images/gift-icon.png" mode=""></image>
+					<view class="p_center">{{ $t(`送礼物`) }}</view>
 				</view>
 				<view v-if="noGoods" class="presale">
 					<view class="acea-row">
@@ -415,13 +473,16 @@
 				@result="qrR"
 			/>
 			<!-- #endif -->
+			<specs ref="specs" :specsInfo="storeInfo.params_list" @myevent="mySpecs"></specs>
+			<!-- 服务抽屉 -->
+			<serviceModal ref="protection" :ensureInfo="storeInfo.protection_list"></serviceModal>
 		</view>
 	</view>
 </template>
 
 <script>
 let sysHeight = uni.getSystemInfoSync().statusBarHeight + 'px';
-import { getProductDetail, getProductCode, collectAdd, collectDel, postCartAdd } from '@/api/store.js';
+import { getProductDetail, getProductCode, collectAdd, collectDel, postCartAdd, realPrice } from '@/api/store.js';
 import { getUserInfo, userShare } from '@/api/user.js';
 import { getCoupons } from '@/api/api.js';
 import { getCartCounts } from '@/api/order.js';
@@ -451,6 +512,8 @@ import colors from '@/mixins/color';
 import { sharePoster } from '@/mixins/sharePoster';
 import parser from '@/components/jyf-parser/jyf-parser';
 import homeList from '@/components/homeList';
+import specs from './components/specs/index.vue';
+import serviceModal from './components/serviceModal/index.vue';
 export default {
 	components: {
 		productConSwiper,
@@ -466,7 +529,9 @@ export default {
 		authorize,
 		// #endif
 		parser,
-		homeList
+		homeList,
+		specs,
+		serviceModal
 	},
 	directives: {
 		trigger: {
@@ -569,7 +634,14 @@ export default {
 			skuArr: [],
 			selectSku: {},
 			currentPage: false,
-			svip_price_open: 1
+			svip_price_open: 1,
+			is_gift: 0, // 是否支持送礼
+			isGiftOrder: 0,
+			realPriceData: {
+				is_vip: 0,
+				price: 0,
+				real_price: 0
+			}
 		};
 	},
 	computed: mapGetters(['isLogin']),
@@ -761,7 +833,7 @@ export default {
 			let item = e;
 			if (item.type === '1') {
 				uni.navigateTo({
-					url: `/pages/activity/goods_seckill_details/index?id=${item.id}&time=${item.time}&status=1`
+					url: `/pages/activity/goods_seckill_details/index?id=${item.id}&time_id=${item.time_id}`
 				});
 			} else if (item.type === '2') {
 				uni.navigateTo({
@@ -865,7 +937,7 @@ export default {
 			// 秒杀
 			if (item.activity && item.activity.type == 1) {
 				uni.redirectTo({
-					url: `/pages/activity/goods_seckill_details/index?id=${item.activity.id}&time=${item.activity.time}&status=1`
+					url: `/pages/activity/goods_seckill_details/index?id=${item.activity.id}&time_id=${item.activity.time_id}`
 				});
 				return;
 			}
@@ -941,13 +1013,14 @@ export default {
 			this.$set(this, 'selectSku', productSelect);
 			if (productSelect && productSelect.stock > 0) {
 				this.$set(this.attr.productSelect, 'image', productSelect.image);
-				this.$set(this.attr.productSelect, 'price', productSelect.price);
+				// this.$set(this.attr.productSelect, 'price', productSelect.price);
 				this.$set(this.attr.productSelect, 'stock', productSelect.stock);
 				this.$set(this.attr.productSelect, 'unique', productSelect.unique);
 				this.$set(this.attr.productSelect, 'cart_num', this.storeInfo.min_qty);
-				this.$set(this.attr.productSelect, 'vip_price', productSelect.vip_price);
+				// this.$set(this.attr.productSelect, 'vip_price', productSelect.vip_price);
 				this.$set(this, 'attrValue', res);
 				this.$set(this, 'attrTxt', this.$t(`已选择`));
+				this.setRealPrice(this.storeInfo.id, productSelect.unique);
 			} else {
 				this.$set(this.attr.productSelect, 'image', productSelect.image);
 				this.$set(this.attr.productSelect, 'price', productSelect.price);
@@ -958,6 +1031,14 @@ export default {
 				this.$set(this, 'attrValue', '');
 				this.$set(this, 'attrTxt', this.$t(`请选择`));
 			}
+		},
+		setRealPrice(id, unique) {
+			realPrice(id, unique).then((res) => {
+				this.realPriceData = res.data;
+				this.$set(this.attr.productSelect, 'price', res.data.real_price);
+				this.$set(this.attr.productSelect, 'vip_price', res.data.member_price);
+				
+			});
 		},
 		/**
 		 * 领取完毕移除当前页面领取过的优惠券展示
@@ -988,7 +1069,7 @@ export default {
 		 * 获取产品详情
 		 *
 		 */
-		getGoodsDetails: function () {
+		getGoodsDetails() {
 			let that = this;
 			uni.showLoading({
 				title: '加载中',
@@ -1001,6 +1082,7 @@ export default {
 					let good_list = res.data.good_list || [];
 					let count = Math.ceil(good_list.length / 6);
 					let goodArray = new Array();
+					this.is_gift = res.data.storeInfo.is_gift;
 					for (let i = 0; i < count; i++) {
 						let list = good_list.slice(i * 6, i * 6 + 6);
 						if (list.length)
@@ -1089,7 +1171,14 @@ export default {
 					// #ifndef H5
 					that.downloadFilestoreImage();
 					// #endif
-					that.DefaultSelect();
+					if (!res.data.productAttr.length) {
+						// 单规格
+						that.DefaultSelect();
+						this.setRealPrice(storeInfo.id, res.data.spec_unique);
+					} else {
+						// 多规格
+						that.DefaultSelect();
+					}
 					that.getCartCount();
 					this.showAnimate = true;
 				})
@@ -1170,28 +1259,32 @@ export default {
 		DefaultSelect: function () {
 			let productAttr = this.attr.productAttr;
 			let value = [];
-			for (var key in this.productValue) {
-				if (this.productValue[key].stock > 0) {
-					value = this.attr.productAttr.length ? key.split(',') : [];
-					break;
+			if (this.storeInfo.default_sku) {
+				value = this.storeInfo.default_sku.split(',');
+			} else {
+				for (var key in this.productValue) {
+					if (this.productValue[key].stock > 0) {
+						value = this.attr.productAttr.length ? key.split(',') : [];
+						break;
+					}
 				}
 			}
 			for (let i = 0; i < productAttr.length; i++) {
 				this.$set(productAttr[i], 'index', value[i]);
 			}
 			//sort();排序函数:数字-英文-汉字；
-
 			let productSelect = this.productValue[value.join(',')];
 			if (productSelect && productAttr.length) {
 				this.$set(this.attr.productSelect, 'store_name', this.storeInfo.store_name);
 				this.$set(this.attr.productSelect, 'image', productSelect.image);
-				this.$set(this.attr.productSelect, 'price', productSelect.price);
+				// this.$set(this.attr.productSelect, 'price', productSelect.price);
 				this.$set(this.attr.productSelect, 'stock', productSelect.stock);
 				this.$set(this.attr.productSelect, 'unique', productSelect.unique);
 				this.$set(this.attr.productSelect, 'cart_num', this.storeInfo.min_qty);
 				this.$set(this, 'attrValue', value.join(','));
-				this.$set(this.attr.productSelect, 'vip_price', productSelect.vip_price);
+				// this.$set(this.attr.productSelect, 'vip_price', productSelect.vip_price);
 				this.$set(this, 'attrTxt', this.$t(`已选择`));
+				this.setRealPrice(this.storeInfo.id, productSelect.unique);
 			} else if (!productSelect && productAttr.length) {
 				this.$set(this.attr.productSelect, 'store_name', this.storeInfo.store_name);
 				this.$set(this.attr.productSelect, 'image', this.storeInfo.image);
@@ -1303,6 +1396,9 @@ export default {
 			this.$set(this.attr, 'cartAttr', true);
 			this.$set(this, 'isOpen', true);
 		},
+		openModal(ref) {
+			this.$refs[ref].isShow = true;
+		},
 		/**
 		 * 打开优惠券插件
 		 */
@@ -1319,6 +1415,7 @@ export default {
 		onMyEvent: function () {
 			this.$set(this.attr, 'cartAttr', false);
 			this.$set(this, 'isOpen', false);
+			this.isGiftOrder = 0;
 		},
 		/**
 		 * 打开属性加入购物车
@@ -1334,14 +1431,14 @@ export default {
 			}
 		},
 		goCart() {
-			uni.switchTab({
+			uni.reLaunch({
 				url: '/pages/order_addcart/order_addcart'
 			});
 		},
 		/*
 		 * 加入购物车
 		 */
-		goCat: function (news) {
+		goCat(news) {
 			let that = this,
 				productSelect = that.productValue[this.attrValue];
 			that.currentPage = false;
@@ -1375,12 +1472,14 @@ export default {
 				virtual_type: that.storeInfo.virtual_type
 			};
 			postCartAdd(q)
-				.then(function (res) {
+				.then((res) => {
 					that.isOpen = false;
 					that.attr.cartAttr = false;
 					if (news) {
+						let url = '/pages/goods/order_confirm/index?new=1&cartId=' + res.data.cartId;
+						if (this.isGiftOrder) url += '&is_gift=' + this.isGiftOrder;
 						uni.navigateTo({
-							url: '/pages/goods/order_confirm/index?new=1&cartId=' + res.data.cartId
+							url
 						});
 					} else {
 						that.$util.Tips({
@@ -1390,6 +1489,7 @@ export default {
 							}
 						});
 					}
+					this.isGiftOrder = 0;
 				})
 				.catch((err) => {
 					that.isOpen = false;
@@ -1423,10 +1523,14 @@ export default {
 				});
 			}
 		},
+		goGift() {
+			this.isGiftOrder = 1;
+			this.goBuy();
+		},
 		/**
 		 * 立即购买
 		 */
-		goBuy: function (e) {
+		goBuy() {
 			if (this.isLogin === false) {
 				toLogin();
 			} else {
@@ -1707,13 +1811,22 @@ export default {
 	z-index: 277;
 	border-top: 1rpx solid #f0f0f0;
 	height: 100rpx;
-	height: calc(100rpx+ constant(safe-area-inset-bottom)); ///兼容 IOS<11.2/
+	height: calc(100rpx + constant(safe-area-inset-bottom)); ///兼容 IOS<11.2/
 	height: calc(100rpx + env(safe-area-inset-bottom)); ///兼容 IOS>11.2/
 	transform: translate3d(0, 100%, 0);
 	transition: all 0.3s cubic-bezier(0.25, 0.5, 0.5, 0.9);
+	.gift-icon {
+		width: 40rpx;
+		height: 40rpx;
+		margin: 5rpx 0 5rpx;
+	}
 }
 
 .product-con .footer .item {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 	font-size: 18rpx;
 	color: #666;
 }
@@ -1996,7 +2109,7 @@ action-sheet-item {
 	z-index: 399;
 	top: 50%;
 	margin-top: -377rpx;
-	.poster-img{
+	.poster-img {
 		border-radius: 6px;
 	}
 }
@@ -2195,6 +2308,41 @@ action-sheet-item {
 	font-size: 24rpx;
 }
 
+.product-con .wrapper {
+	padding-bottom: 20rpx;
+}
+.product-con .wrapper .share .money {
+	display: flex;
+	align-items: flex-end;
+	.text {
+		font-weight: 400;
+		font-size: 22rpx;
+	}
+	.num {
+		font-size: 40rpx;
+		font-family: 'SemiBold';
+	}
+	.vip-money {
+		border-radius: 20rpx;
+		background-color: #fff0d1;
+		display: flex;
+		align-items: center;
+		padding-right: 10rpx;
+		font-weight: 600;
+		font-size: 22rpx;
+		color: #333333;
+		.svip-tag {
+			font-weight: 600;
+			font-size: 18rpx;
+			color: #fddaa4;
+			height: 26rpx;
+			line-height: 26rpx;
+			padding: 0 10rpx;
+			background: linear-gradient(90deg, #484643 0%, #1f1b17 100%);
+			border-radius: 20rpx 0 15rpx 20rpx;
+		}
+	}
+}
 .product-con .wrapper .share .money image {
 	width: 66rpx;
 	height: 26rpx;
@@ -2235,15 +2383,40 @@ action-sheet-item {
 
 .attribute {
 	padding: 10rpx 30rpx;
-
+	.card {
+		padding: 20rpx 0 20rpx 0rpx;
+	}
 	.line1 {
 		width: 600rpx;
+	}
+	.line {
+		width: 100%;
+		height: 1rpx;
+		background-color: #eee;
+	}
+	.attr-pics {
+		margin-top: 15rpx;
+		width: 100%;
+		display: flex;
+		justify-content: flex-end;
+		padding-right: 40rpx;
+	}
+	.params-list {
+		overflow-x: scroll;
+
+		.item {
+			display: flex;
+			align-items: center;
+			padding: 0 10rpx;
+			image {
+				margin-right: 8rpx;
+			}
+		}
 	}
 }
 
 .flex {
 	display: flex;
-	justify-content: space-between;
 	width: 100%;
 }
 

@@ -90,9 +90,6 @@
 		</view>
 		<view class="bottom">
 			<view class="ver" v-if="copyRight">{{ copyRight }}</view>
-			<view v-else class="ver">
-				<a href="https://www.crmeb.com">Copyright ©2024 CRMEB. All Rights</a>
-			</view>
 		</view>
 		<Verify @success="success" :captchaType="captchaType" :imgSize="{ width: '330px', height: '155px' }" ref="verify"></Verify>
 	</view>
@@ -139,7 +136,8 @@ export default {
 			appleLoginStatus: false, // 苹果登录强制绑定手机号码状态
 			appleUserInfo: null,
 			appleShow: false, // 苹果登录版本必须要求ios13以上的
-			keyLock: true
+			keyLock: true,
+			captchaType: 'clickWord',
 		};
 	},
 	watch: {

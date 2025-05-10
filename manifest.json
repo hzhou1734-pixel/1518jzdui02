@@ -1,9 +1,9 @@
 {
-    "name" : "海拔单商户",
+    "name" : "海拔科技",
     "appid" : "__UNI__A3F1ED4",
-    "description" : "海拔单商户",
-    "versionName" : "5.4.0",
-    "versionCode" : 540,
+    "description" : "海拔科技",
+    "versionName" : "5.6.0",
+    "versionCode" : 560,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
@@ -99,13 +99,13 @@
                     "weixin" : {
                         "__platform__" : [ "ios", "android" ],
                         "appid" : "wx277a269f3d736d67",
-                        "UniversalLinks" : "https://bzapp.crmeb.net/uni-universallinks/__UNI__A3F1ED4/"
+                        "UniversalLinks" : ""
                     }
                 },
                 "share" : {
                     "weixin" : {
                         "appid" : "wx277a269f3d736d67",
-                        "UniversalLinks" : "https://bzapp.crmeb.net/uni-universallinks/__UNI__A3F1ED4/"
+                        "UniversalLinks" : ""
                     }
                 },
                 "push" : {},
@@ -120,7 +120,7 @@
                     "weixin" : {
                         "appid" : "wx277a269f3d736d67",
                         "appsecret" : "bd08741a055c2ecac5826ff1c048464b",
-                        "UniversalLinks" : "https://bzapp.crmeb.net/uni-universallinks/__UNI__A3F1ED4/"
+                        "UniversalLinks" : ""
                     }
                 },
                 "ad" : {},
@@ -181,7 +181,7 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "wx3b82801238ca1b57",
+        "appid" : "wx188305f585e53610",
         "setting" : {
             "urlCheck" : false,
             "minified" : true,
@@ -190,7 +190,7 @@
         },
         "permission" : {
             "scope.userLocation" : {
-                "desc" : "你的位置信息将用于和门店的距离长度"
+                "desc" : "你的位置信息将用于查看与门店的距离"
             }
         },
         "optimization" : {

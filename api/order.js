@@ -121,6 +121,13 @@ export function orderDel(uni) {
 }
 
 /**
+ * 礼品订单详情
+ * @param string uni 
+ */
+export function getGiftOrderDetail(id) {
+	return request.get('order/gift_detail/' + id);
+}
+/**
  * 订单详情
  * @param string uni 
  */
@@ -192,13 +199,8 @@ export function orderRefundVerify(data) {
  * 订单确认获取订单详细信息
  * @param string cartId
  */
-export function orderConfirm(cartId, news, addressId, shipping_type) {
-	return request.post('order/confirm', {
-		cartId,
-		'new': news,
-		addressId,
-		shipping_type
-	});
+export function orderConfirm(data) {
+	return request.post('order/confirm', data);
 }
 
 /**
@@ -379,4 +381,13 @@ export function getCashierOrder(orderId, type) {
  */
 export function getInvoiceLink(id) {
 	return request.get(`v2/order/down_invoice/${id}`);
+}
+
+/**
+ * 领取礼物
+ * @param orderId
+ * @param data
+ */
+export function orderReceiveGift(orderId, data) {
+	return request.post("order/receive_gift/" + orderId, data);
 }

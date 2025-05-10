@@ -13,7 +13,7 @@
 			"style": {
 				"navigationBarTitleText": "",
 				"navigationStyle": "custom",
-				"navigationBarTextStyle": "white",
+				"navigationBarTextStyle": "black",
 				"app-plus": {
 					"scrollIndicator": "none"
 				}
@@ -316,7 +316,35 @@
 							// #endif
 						}
 					}
+				},{
+					"path": "receive_gifts_status/index",
+					"style": {
+						"navigationBarTitleText": "领取结果",
+						"app-plus": {
+							// #ifdef APP-PLUS
+							"titleNView": {
+								"type": "default"
+							}
+							// #endif
+						}
+					}
 				}, {
+					"path": "receive_gift/index",
+					"style": {
+						"navigationBarTitleText": "领取礼物",
+						"navigationBarBackgroundColor": "#e93323",
+						// #ifdef MP
+						"navigationBarTextStyle": "#fff",
+						// #endif
+						"app-plus": {
+							// #ifdef APP-PLUS
+							"titleNView": {
+								"type": "default"
+							}
+							// #endif
+						}
+					}
+				},{
 					"path": "cashier/index",
 					"style": {
 						"navigationBarTitleText": "收银台",
@@ -664,6 +692,24 @@
 					"style": {
 						"navigationBarTitleText": "佣金记录"
 
+							// #ifdef MP
+							,
+						"navigationBarTextStyle": "black",
+						"navigationBarBackgroundColor": "#FFFFFF"
+							// #endif
+							,
+						"app-plus": {
+							// #ifdef APP-PLUS
+							"titleNView": {
+								"type": "default"
+							}
+							// #endif
+						}
+					}
+				},{
+					"path": "user_spread_money/receiving",
+					"style": {
+						"navigationBarTitleText": "收款"
 							// #ifdef MP
 							,
 						"navigationBarTextStyle": "black",
@@ -1391,21 +1437,18 @@
 				{
 					"path": "special/index",
 					"style": {
-						"navigationBarTitleText": "专题页",
+					"navigationBarTextStyle": "white",
+					"navigationBarBackgroundColor": "#333333",
+					"navigationBarTitleText": "专题页",
 						"app-plus": {
-							// #ifdef APP-PLUS
-							"titleNView": {
-								"type": "default"
-							}
-							// #endif
+							"scrollIndicator": "none"
 						}
-
 					}
 				},
 				{
 					"path": "settled/index",
 					"style": {
-						"navigationBarTitleText": "代理商申请",
+						"navigationBarTitleText": "分销申请",
 						"app-plus": {
 							// #ifdef APP-PLUS
 							"titleNView": {

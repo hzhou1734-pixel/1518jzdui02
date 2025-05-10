@@ -718,3 +718,8 @@ export function changeRemindStatus(status) {
 export function spreadAgent(data) {
 	return request.post(`agent/spread`, data);
 }
+
+// 用户确认商家转账
+export function transferInfoApi(data) {
+	return request.get(`transfer/info`, data);
+}

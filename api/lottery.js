@@ -4,8 +4,8 @@ import request from "@/utils/request.js";
  * 获取抽奖详情信息
  * 
  */
-export function getLotteryData(type) {
-	return request.get(`v2/lottery/info/${type}`);
+export function getLotteryData(type, lottery_id) {
+	return request.get(`v2/lottery/info/${type}${lottery_id ? '/' + lottery_id : ''}`);
 }
 
 /**

@@ -353,7 +353,6 @@ export default {
 .list .btn {
 	font-size: 26rpx;
 	color: #282828;
-	cursor: pointer;
 }
 
 .list .btn ~ .btn {

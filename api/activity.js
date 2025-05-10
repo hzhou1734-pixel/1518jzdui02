@@ -162,7 +162,7 @@ export function getSeckillList(time, data) {
  * @param int id
  */
 export function getSeckillDetail(id, data) {
-	return request.get('seckill/detail/' + id, data);
+	return request.get(`seckill/detail/${id}`, data);
 }
 
 /**
@@ -256,7 +256,9 @@ export function getIntegralProductDetail(id) {
  * @param object data
  */
 export function getStoreIntegralList(data) {
-	return request.get('store_integral/list', data, );
+	return request.get('store_integral/list', data, {
+		noAuth: true
+	});
 }
 
 /**

@@ -436,8 +436,27 @@ export function getOpenAdv(data) {
 /**
  * 获取版权信息
  */
-export function getHaibaCopyRight() {
+export function getCrmebCopyRight() {
 	return request.get('copyright', {}, {
 		noAuth: true
 	})
+}
+/**
+ * 获取DIY版本接口
+ * @param {Object} id
+ */
+export function getDiyVersion(name) {
+	return request.get(`v2/diy/get_version/${name}`, {}, {
+		noAuth: true
+	});
+}
+
+/**
+ * 获取DIY签到信息
+ * @param {Object} id
+ */
+export function getSign() {
+	return request.get('v2/diy/sign', {}, {
+		noAuth: true
+	});
 }
