@@ -6,6 +6,7 @@ import util from 'utils/util'
 import configs from './config/app.js'
 import socket from './libs/new_chat.js'
 import i18n from './utils/lang.js';
+import shareMixin from './mixins/shareMixin'
 Vue.prototype.$util = util;
 Vue.prototype.$config = configs;
 Vue.prototype.$Cache = Cache;
@@ -22,6 +23,7 @@ Vue.component('pageLoading', pageLoading)
 Vue.component('easyLoadimage', easyLoadimage)
 Vue.component('BaseMoney', BaseMoney)
 Vue.component('BaseTag', BaseTag)
+Vue.mixin(shareMixin)
 import ActivePermission from './libs/permission.js';
 Vue.prototype.$permission = ActivePermission;
 import {
