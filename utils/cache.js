@@ -1,37 +1,46 @@
-import { EXPIRE } from '../config/app';
+import {
+	EXPIRE
+} from '../config/app';
 
 class Cache {
-	
+
 	constructor(handler) {
-	    this.cacheSetHandler = uni.setStorageSync;
+		this.cacheSetHandler = uni.setStorageSync;
 		this.cacheGetHandler = uni.getStorageSync;
 		this.cacheClearHandler = uni.removeStorageSync;
-		this.cacheExpire = '_expire_2019_12_17_18_44';
-		this.name = 'storage';
+		this.cacheExpire = 'UNI-APP-CRMEB:TAG';
+		this.clearOverdue();
 	}
-	
+
 	/**
 	 * 获取当前时间戳
 	 */
-	time()
-	{
+	time() {
 		return Math.round(new Date() / 1000);
 	}
-	
+
 	/**
-	 * 日期字符串转时间戳
+	 * 字符串转时间戳
 	 * @param {Object} expiresTime
 	 */
-	strTotime(expiresTime){
+	strTotime(expiresTime) {
 		let expires_time = expiresTime.substring(0, 19);
 		expires_time = expires_time.replace(/-/g, '/');
 		return Math.round(new Date(expires_time).getTime() / 1000);
 	}
-	
+
+
+	/**
+	 * 设置过期时间缓存
+	 * @param {Object} key
+	 * @param {Object} expire
+	 */
 	setExpireCaheTag(key, expire) {
 		expire = expire !== undefined ? expire : EXPIRE;
 		if (typeof expire === 'number') {
-			let tag = this.cacheGetHandler(this.cacheExpire), newTag = [],newKeys = [];
+			let tag = this.cacheGetHandler(this.cacheExpire),
+				newTag = [],
+				newKeys = [];
 			if (typeof tag === 'object' && tag.length) {
 				newTag = tag.map(item => {
 					newKeys.push(item.key);
@@ -40,7 +49,7 @@ class Cache {
 					}
 					return item;
 				});
-			} 
+			}
 			if (!newKeys.length || newKeys.indexOf(key) === -1) {
 				newTag.push({
 					key: key,
@@ -50,186 +59,173 @@ class Cache {
 			this.cacheSetHandler(this.cacheExpire, newTag);
 		}
 	}
-	
-	/**
-	 * 设置过期时间缓存
-	 * @param {Object} name key
-	 * @param {Object} value value
-	 * @param {Object} expire 过期时间
-	 * @param {Object} startTime 记录何时将值存入缓存，毫秒级
-	 */
-	setItem(params){
-	    let obj = {
-	        name:'',
-	        value:'',
-	        expires:"",
-	        startTime:new Date().getTime()
-	    }
-	    let options = {};
-	    //将obj和传进来的params合并
-	    Object.assign(options,obj,params);
-	    if(options.expires){
-			//如果options.expires设置了的话
-			//以options.name为key，options为值放进去
-	        // localStorage.setItem(options.name,JSON.stringify(options));
-			uni.setStorageSync(options.name,JSON.stringify(options));
-	    }else{
-			//如果options.expires没有设置，就判断一下value的类型
-	       	let type = Object.prototype.toString.call(options.value);
-	       	//如果value是对象或者数组对象的类型，就先用JSON.stringify转一下，再存进去
-	        if(Object.prototype.toString.call(options.value) == '[object Object]'){
-	            options.value = JSON.stringify(options.value);
-	        }
-	        if(Object.prototype.toString.call(options.value) == '[object Array]'){
-	            options.value = JSON.stringify(options.value);
-	        }
-	        // localStorage.setItem(options.name,options.value);
-			uni.setStorageSync(options.name,options.value);
-	    }
-	}
-	
+
 	/**
 	 * 缓存是否过期,过期自动删除
 	 * @param {Object} key
 	 * @param {Object} $bool true = 删除,false = 不删除
 	 */
-	getExpireCahe(key,$bool)
-	{
-		try{
-			let time = this.cacheGetHandler(key + this.cacheExpire);
-			if (time) {
-				let newTime = parseInt(time);
-				if (time && time < this.time() && !Number.isNaN(newTime)) {
-					if ($bool === undefined || $bool === true) {
-						this.cacheClearHandler(key);
-						this.cacheClearHandler(key + this.cacheExpire);
+	getExpireCahe(key, $bool) {
+		try {
+			let tag = this.cacheGetHandler(this.cacheExpire),
+				time = 0,
+				index = false;
+			if (typeof tag === 'object' && tag.length) {
+				tag.map((item, i) => {
+					if (item.key === key) {
+						time = item.expire
+						index = i
 					}
-					return false;
-				} else
-					return true;
-			} else {
-				return !!this.cacheGetHandler(key);
+				});
+				if (time) {
+					let newTime = parseInt(time);
+					if (time && time < this.time() && !Number.isNaN(newTime)) {
+						if ($bool === undefined || $bool === true) {
+							this.cacheClearHandler(key);
+							if (index !== false) {
+								tag.splice(index, 1)
+								this.cacheSetHandler(this.cacheExpire, tag);
+							}
+						}
+						return false;
+					} else
+						return true;
+				} else {
+					return !!this.cacheGetHandler(key);
+				}
 			}
-		}catch(e){
+			return false;
+		} catch (e) {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * 设置缓存
 	 * @param {Object} key
 	 * @param {Object} data
 	 */
-	set(key,data,expire){
-		if(typeof data === 'object')
+	set(key, data, expire) {
+		if (data === undefined) {
+			return true;
+		}
+		if (typeof data === 'object')
 			data = JSON.stringify(data);
-		try{
-			this.setExpireCaheTag(key,expire);
-			return this.cacheSetHandler(key,data); 
-		}catch(e){
+		try {
+			this.setExpireCaheTag(key, expire);
+			return this.cacheSetHandler(key, data);
+		} catch (e) {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * 检测缓存是否存在
 	 * @param {Object} key
 	 */
-	has(key)
-	{
-		return this.getExpireCahe(key);
+	has(checkwhethethecacheexists, isDel) {
+		this.clearOverdue();
+		return this.getExpireCahe(checkwhethethecacheexists, isDel);
 	}
-	
+
 	/**
 	 * 获取缓存
 	 * @param {Object} key
 	 * @param {Object} $default
 	 * @param {Object} expire
 	 */
-	get(key,$default,expire){
-		try{
+	get(key, $default = true, expire) {
+		this.clearOverdue();
+		try {
 			let isBe = this.getExpireCahe(key);
 			let data = this.cacheGetHandler(key);
 			if (data && isBe) {
 				if (typeof $default === 'boolean')
-					return JSON.parse(data);
+					if(this.isJSON(data)) {
+						return JSON.parse(data);
+					} else {
+						return data
+					}
 				else
 					return data;
 			} else {
 				if (typeof $default === 'function') {
 					let value = $default();
-					this.set(key,value,expire);
+					this.set(key, value, expire);
 					return value;
 				} else {
-					this.set(key,$default,expire);
+					this.set(key, $default, expire);
 					return $default;
 				}
 			}
-		}catch(e){
+		} catch (e) {
 			return null;
 		}
 	}
 	
+	isJSON(str) {
+	  try {
+	    JSON.parse(str);
+	    return true;
+	  } catch (e) {
+	    return false;
+	  }
+	}
+
 	/**
 	 * 删除缓存
 	 * @param {Object} key
 	 */
-	clear(key)
-	{
-		try{
-			let cahceValue = this.cacheGetHandler(key + this.cacheExpire);
-			if(cahceValue)
-				this.cacheClearHandler(key + this.cacheExpire);
+	clear(key) {
+		try {
+			let cahceValue = this.cacheGetHandler(this.cacheExpire),
+				index = false;
+			if (cahceValue && typeof cahceValue === 'object' && cahceValue.length) {
+				cahceValue.map((item, i) => {
+					if (item.key === key) {
+						index = i;
+					}
+				});
+
+				if (index !== false) {
+					cahceValue.splice(index, 1);
+				}
+				this.cacheSetHandler(this.cacheExpire, cahceValue);
+			}
 			return this.cacheClearHandler(key);
-		}catch(e){
+		} catch (e) {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * 清除过期缓存
 	 */
-	clearOverdue()
-	{
-		// let cacheList = uni.getStorageInfoSync(),that = this;
-		// if (typeof cacheList.keys === 'object'){
-		// 	cacheList.keys.forEach(item=>{
-		// 		that.getExpireCahe(item);
-		// 	})
-		// }
-	}
-	
-	/**
-	 * 获取缓存，调用后无需转换数据类型
-	 * @param {Object} key
-	 */
-	getItem(name){
-	    // let item = localStorage.getItem(name);
-		let item = uni.getStorageSync(name);
-	    //先将拿到的试着进行json转为对象的形式
-	    try{
-	        item = JSON.parse(item);
-	    }catch(error){
-	    //如果不行就不是json的字符串，就直接返回
-	        item = item;
-	    }
-	    //如果有startTime的值，说明设置了失效时间
-	    if(item.startTime){
-	        let date = new Date().getTime();
-	        //何时将值取出减去刚存入的时间，与item.expires比较，如果大于就是过期了，如果小于或等于就还没过期
-	        if(date - item.startTime > item.expires){
-	        //缓存过期，清除缓存，返回false
-	            // localStorage.removeItem(name);
-				uni.removeStorageSync(name);
-	            return false;
-	        }else{
-	        //缓存未过期，返回值
-	            return item.value;
-	        }
-	    }else{
-	    //如果没有设置失效时间，直接返回值
-	        return item;
-	    }
+	clearOverdue() {
+		let cahceValue = this.cacheGetHandler(this.cacheExpire),
+			time = this.time(),
+			newBeOverdueValue = [],
+			newTagValue = [];
+
+		if (cahceValue && typeof cahceValue === 'object' && cahceValue.length) {
+			cahceValue.map(item => {
+				if (item) {
+					if ((item.expire !== undefined && item.expire > time) || item.expire === 0) {
+						newTagValue.push(item);
+					} else {
+						newBeOverdueValue.push(item.key);
+					}
+				}
+			});
+		}
+		//保存没有过期的缓存标签
+		if (newTagValue.length !== cahceValue.length) {
+			this.cacheSetHandler(this.cacheExpire, newTagValue);
+		}
+		//删除过期缓存
+		newBeOverdueValue.forEach(k => {
+			this.cacheClearHandler(k);
+		})
 	}
 }
 
