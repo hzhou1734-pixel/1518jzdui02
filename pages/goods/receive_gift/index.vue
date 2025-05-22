@@ -42,7 +42,8 @@ export default {
 			store_name: '',
 			nickname: '',
 			giftStatusText: '',
-			o_id: 0
+			o_id: 0,
+			options: null
 		};
 	},
 	props: {},
@@ -54,20 +55,27 @@ export default {
 		// }
 	},
 	onLoad(options) {
+		this.options = options;
+		if (this.isLogin) {} else {
+			toLogin();
+		}
+	},
+	onShow() {
 		if (this.isLogin) {
-			this.order_id = options.id;
 			// #ifdef MP
-			if (options.scene) {
-				let value = this.$util.getUrlParams(decodeURIComponent(options.scene));
-				if (value.order_id) options.id = value.id;
+			if (this.options.scene) {
+				let value = this.$util.getUrlParams(decodeURIComponent(this.options.scene));
+				console.log(value);
+				// if (value.order_id) this.options.id = value.id;
+				this.order_id = value.id;
 				//记录推广人uid
 				if (value.pid) app.globalData.spid = value.pid;
+			} else {
+				this.order_id = this.options.id;
 			}
 			// #endif
 			this.uid = this.$store.state.app.uid;
 			this.getOrderInfo();
-		} else {
-			toLogin();
 		}
 	},
 	methods: {
