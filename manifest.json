@@ -1,9 +1,10 @@
 {
     "name" : "海拔科技",
-    "appid" : "__UNI__A3F1ED4",
+    "appid" : "__UNI__D6F2BE1",
     "description" : "海拔科技",
     "versionName" : "5.6.0",
     "versionCode" : 560,
+    "sassImplementationName" : "node-sass",
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
@@ -181,7 +182,7 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "wx188305f585e53610",
+        "appid" : "wxf6c708555df5e1a3",
         "setting" : {
             "urlCheck" : false,
             "minified" : true,
