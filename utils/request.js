@@ -10,6 +10,7 @@ import {
 } from '../libs/login';
 import store from '../store';
 import i18n from './lang.js';
+const tabbarList = ['pages/index/index', 'pages/goods_cate/goods_cate', 'pages/order_addcart/order_addcart', 'pages/user/index']
 
 /**
  * 发送请求
@@ -20,6 +21,10 @@ function baseRequest(url, method, data, {
 }) {
 	let Url = HTTP_REQUEST_URL,
 		header = HEADER;
+		
+	const pages = getCurrentPages();
+	const currentPage = pages[pages.length - 1];
+	const route = currentPage ? currentPage.route : '';
 
 	if (!noAuth) {
 		//登录过期自动登录
@@ -48,7 +53,10 @@ function baseRequest(url, method, data, {
 				else if (res.data.status == 200)
 					reslove(res.data, res);
 				else if ([110002, 110003, 110004].indexOf(res.data.status) !== -1) {
-					toLogin();
+					store.commit("LOGOUT");
+					if(!tabbarList.includes(route)) {
+						toLogin();
+					} 
 					reject(res.data);
 				} else if (res.data.status == 100103) {
 					uni.showModal({
