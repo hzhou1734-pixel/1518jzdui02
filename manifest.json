@@ -182,7 +182,7 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "wx2d3a614f5ea094d8",
+        "appid" : "wxc771b713a8d7c0fe",
         "setting" : {
             "urlCheck" : false,
             "minified" : true,
@@ -217,7 +217,14 @@
     },
     "h5" : {
         "devServer" : {
-            "https" : false
+            "https" : false,
+            "proxy" : {
+                "/api" : {
+                    "target" : "https://yx1327.dsh.ehaiba.cn",
+                    "changeOrigin" : true,
+                    "secure" : true
+                }
+            }
         },
         "router" : {
             "mode" : "history",
@@ -251,4 +258,3 @@
     "lazyCodeLoading" : "requiredComponents"
 }
 /* ios打包配置 */
-

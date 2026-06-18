@@ -655,7 +655,7 @@ export default {
 	 * @param successCallback success回调 
 	 * @param errorCallback err回调
 	 */
-	uploadImgs(uploadUrl, filePath, successCallback, errorCallback) {
+		uploadImgs(uploadUrl, filePath, successCallback, errorCallback) {
 		let that = this;
 		uni.uploadFile({
 			url: HTTP_REQUEST_URL + '/api/' +
