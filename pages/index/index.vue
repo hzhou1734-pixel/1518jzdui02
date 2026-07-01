@@ -747,6 +747,18 @@
 				this.promotionIndex = promotionIndex;
 				// 如果DIY配置已有秒杀模块，则隐藏硬编码的秒杀
 				this.showSeckill = !temp.some(item => item.name === 'seckill');
+				// 对DIY中的秒杀模块强制使用深色文字，确保在浅色 header 上可见
+				temp.forEach(item => {
+					if (item.name === 'seckill') {
+						item.titleColor = { color: [{ item: '#333' }] };
+						item.tipsColor = { color: [{ item: '#333' }] };
+						item.tipsColor2 = { color: [{ item: '#333' }] };
+						item.headerBntColor = { color: [{ item: '#333' }] };
+						item.headerBntColor2 = { color: [{ item: '#333' }] };
+						item.headerBgColor = { color: [{ item: '#fff' }, { item: '#fff' }] };
+						item.styleConfig = { tabVal: 0 };
+					}
+				});
 			},
 			getDiyData() {
 				getDiy(0).then(res => {
