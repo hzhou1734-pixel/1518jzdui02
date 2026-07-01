@@ -66,8 +66,10 @@
 					<!-- #endif -->
 					<hotspot v-if="item.name == 'hotspot'" :dataConfig="item"></hotspot>
 					<follow v-if="item.name == 'follow'" :dataConfig="item"></follow>
-				</block>
-				<!-- 分类商品模块 -->
+			</block>
+			<!-- 限时秒杀 -->
+			<seckill v-if="showSeckill" :dataConfig="defaultSeckillConfig"></seckill>
+			<!-- 分类商品模块 -->
 				<!-- #ifndef  APP-PLUS -->
 				<view class="sort-product px-20" v-if="!styleConfig.length">
 				<!-- #endif -->
@@ -274,7 +276,52 @@
 				isFixed: false,
 				// #endif
 				site_config: '',
-				errorNetwork: false, // 是否断网
+				showSeckill: true,
+			defaultSeckillConfig: {
+				name: 'seckill',
+				titleText: { tabVal: 0, tabList: [{ style: 'normal' }] },
+				titleColor: { color: [{ item: '#333' }] },
+				titleNumber: { val: 18 },
+				topConfig: { val: 0 },
+				prConfig: { val: 12 },
+				bottomConfig: { val: 0 },
+				mbConfig: { val: 0 },
+				bottomBgColor: { color: [{ item: '#f5f5f5' }] },
+				fillet: { val: 8, type: 0 },
+				styleConfig: { tabVal: 0 },
+				titleConfig: { tabVal: 0 },
+				titleTxtConfig: { value: '限时秒杀' },
+				imgConfig: { url: '' },
+				imgColorConfig: { url: '' },
+				tipsColor: { color: [{ item: '#999' }] },
+				tipsColor2: { color: [{ item: '#999' }] },
+				rightBntConfig: { value: '更多' },
+				headerBntColor: { color: [{ item: '#999' }] },
+				headerBntColor2: { color: [{ item: '#999' }] },
+				bntNumber: { val: 12 },
+				headerBgColor: { color: [{ item: '#fff' }, { item: '#fff' }] },
+				goodStyleConfig: { tabVal: 3 },
+				seckillConfig: { tabVal: 0 },
+				filletImg: { val: 8, type: 0 },
+				goodsNameColor: { color: [{ item: '#333' }] },
+				goodsName: { tabVal: 0 },
+				checkboxInfo: { type: [0, 1, 2, 3] },
+				toneConfig: { tabVal: 0 },
+				progressTxtColor: { color: [{ item: '#E93323' }] },
+				seckillPriceColor2: { color: [{ item: '#E93323' }] },
+				goodsPriceColor: { color: [{ item: '#999' }] },
+				goodsBntTxtColor: { color: [{ item: '#fff' }] },
+				goodsBntColor: { color: [{ item: '#E93323' }, { item: '#FF7931' }] },
+				numberBgColor: { color: [{ item: '#333' }, { item: '#333' }] },
+				numberBgColor2: { color: [{ item: '#333' }, { item: '#333' }] },
+				numberColor: { color: [{ item: '#fff' }] },
+				numberColor2: { color: [{ item: '#fff' }] },
+				moduleColor: { color: [{ item: '#fff' }, { item: '#fff' }] },
+				progressColor: { color: [{ item: '#FF7931' }, { item: '#E93323' }] },
+				imgBgConfig: { url: '' },
+				numberConfig: { val: 6 }
+			},
+			errorNetwork: false, // 是否断网
 				isHeaderSerch: false,
 				showHomeComb: false,
 				showCateNav: false,
@@ -698,6 +745,8 @@
 				this.styleConfig = temp;
 				this.goodsIndex = goodsIndex;
 				this.promotionIndex = promotionIndex;
+				// 如果DIY配置已有秒杀模块，则隐藏硬编码的秒杀
+				this.showSeckill = !temp.some(item => item.name === 'seckill');
 			},
 			getDiyData() {
 				getDiy(0).then(res => {
