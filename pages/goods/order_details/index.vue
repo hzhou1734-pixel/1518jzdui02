@@ -976,7 +976,10 @@ export default {
 							{
 								title: this.$t(`订单信息不存在`)
 							},
-							'/pages/goods/order_list/index'
+							{
+								tab: 4,
+								url: '/pages/goods/order_list/index'
+							}
 						);
 					}
 					let _type = res.data._status._type;
@@ -1076,7 +1079,10 @@ export default {
 						{
 							title: err
 						},
-						'/pages/goods/order_list/index'
+						{
+							tab: 4,
+							url: '/pages/goods/order_list/index'
+						}
 					);
 				});
 		},
@@ -1348,16 +1354,16 @@ export default {
 										}
 									);
 								} else {
-									return that.$util.Tips(
-										{
-											title: that.$t(`删除成功`),
-											icon: 'success'
-										},
-										{
-											tab: 5,
-											url: '/pages/goods/order_list/index'
-										}
-									);
+								return that.$util.Tips(
+									{
+										title: that.$t(`删除成功`),
+										icon: 'success'
+									},
+									{
+										tab: 4,
+										url: '/pages/goods/order_list/index'
+									}
+								);
 								}
 							})
 							.catch((err) => {
@@ -1397,7 +1403,10 @@ export default {
 									{
 										title: data.msg
 									},
-									'/pages/goods/order_list/index'
+									{
+										tab: 4,
+										url: '/pages/goods/order_list/index'
+									}
 								);
 								// #endif
 							})

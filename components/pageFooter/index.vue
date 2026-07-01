@@ -21,7 +21,7 @@
 							<image v-if="newData.navStyleConfig.tabVal != 1" :src="item.imgList[1]"></image>
 							<view v-if="newData.navStyleConfig.tabVal != 2" class="txt" :style="[txtColor]">{{ item.name }}</view>
 						</template>
-						<BaseBadge v-if="item.link === '/pages/order_addcart/order_addcart' && cartNum > 0" class="uni-badge-left-margin" :text="cartNum" absolute="rightTop"></BaseBadge>
+						<BaseBadge v-if="item.link === '/pages/goods/order_list/index' && cartNum > 0" class="uni-badge-left-margin" :text="cartNum" absolute="rightTop"></BaseBadge>
 					</view>
 				</view>
 			</view>
@@ -135,6 +135,15 @@ export default {
 	methods: {
 		setNavigationInfo(data) {
 			if (this.isTabBar) {
+				// 将底部菜单的购物车替换为订单
+				if (data.menuList && data.menuList.length) {
+					data.menuList = data.menuList.map((item) => {
+						if (item.link === '/pages/order_addcart/order_addcart') {
+							return { ...item, name: '订单', link: '/pages/goods/order_list/index' };
+						}
+						return item;
+					});
+				}
 				this.newData = data;
 				this.showTabBar = data.effectConfig.tabVal;
 				let pdHeight = data.topConfig.val + data.bottomConfig.val;
@@ -180,10 +189,12 @@ export default {
 				item.link = '/pages/short_video/nvueSwiper/index';
 				//#endif
 			}
+			// 确保原生 tabBar 可见，否则 switchTab 会失败
+			uni.showTabBar();
 			uni.switchTab({
 				url: item.link,
 				fail(err) {
-					uni.redirectTo({
+					uni.reLaunch({
 						url: item.link
 					});
 				}

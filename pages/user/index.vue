@@ -186,14 +186,14 @@
 						<view class="order-hd flex">
 							<view class="left">{{ $t('订单中心') }}</view>
 							<navigator class="right flex" hover-class="none" url="/pages/goods/order_list/index"
-								open-type="navigate">
+								open-type="reLaunch">
 								{{ $t('查看全部') }}
 								<text class="iconfont icon-jiantou"></text>
 							</navigator>
 						</view>
 						<view class="order-bd">
 							<block v-for="(item, index) in orderMenu" :key="index">
-								<navigator class="order-item" hover-class="none" :url="item.url">
+								<navigator class="order-item" hover-class="none" :url="item.url" open-type="reLaunch">
 									<view class="pic">
 										<!-- <image :src="item.img" mode=""></image> -->
 										<text class="iconfont" :class="item.img"></text>

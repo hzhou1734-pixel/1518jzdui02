@@ -200,6 +200,9 @@ export default {
 		}
 	},
 	onShow() {
+		// #ifdef H5
+		uni.showTabBar();
+		// #endif
 		if (this.isLogin) {
 			this.page = 1;
 			this.orderList = [];
