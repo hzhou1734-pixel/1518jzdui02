@@ -30,9 +30,6 @@
 					<blankPage v-if="item.name == 'blankPage'" :dataConfig="item"></blankPage>
 					<combination v-if="item.name == 'combination'" :dataConfig="item">
 					</combination>
-					<!-- 优惠券 -->
-					<coupon v-if="item.name == 'coupon'" :dataConfig="item"
-						@changeLogin="changeLogin"></coupon>
 					<!-- 客户服务 -->
 					<customerService v-if="item.name == 'customerService'" :dataConfig="item">
 					</customerService>
@@ -67,7 +64,6 @@
 					<richText v-if="item.name == 'richText'" :dataConfig="item"></richText>
 					<videos v-if="item.name == 'videos'" :dataConfig="item"></videos>
 					<!-- #endif -->
-					<signIn v-if="item.name == 'signIn'" :dataConfig="item"></signIn>
 					<hotspot v-if="item.name == 'hotspot'" :dataConfig="item"></hotspot>
 					<follow v-if="item.name == 'follow'" :dataConfig="item"></follow>
 				</block>
@@ -98,8 +94,6 @@
 						<emptyPage title="暂无商品，去看点别的吧～" ></emptyPage>
 					</view>
 				</view>
-				<couponWindow :window="isCouponShow" @onColse="couponClose" :couponImage="couponObj.image"
-					:couponList="couponObj.list"></couponWindow>
 					<!-- #ifdef H5 -->
 				<view v-if="site_config" class="site-config" @click="goICP">{{ site_config }}</view>
 				<!-- #endif -->
@@ -126,10 +120,7 @@
 <script>
 	const app = getApp();
 	import colors from "@/mixins/color";
-	import couponWindow from '@/components/couponWindow/index';
 	import {
-		getCouponV2,
-		getCouponNewUser,
 		getCrmebCopyRight
 	} from '@/api/api.js';
 	import {
@@ -145,7 +136,6 @@
 	import newVip from './components/newVip';
 	import headerSerch from './components/headerSerch';
 	import swipers from './components/swipers';
-	import coupon from './components/coupon';
 	import articleList from './components/articleList';
 	import bargain from './components/bargain';
 	import blankPage from './components/blankPage';
@@ -169,7 +159,6 @@
 	import richText from './components/richText';
 	import videos from './components/videos';
 	// #endif
-	import signIn from './components/signIn';
 	import hotspot from './components/hotspot';
 	import follow from './components/follow';
 	import waterfallsFlow from "@/components/WaterfallsFlow/WaterfallsFlow.vue";
@@ -224,13 +213,11 @@
 		components: {
 			Loading,
 			pageFooter,
-			couponWindow,
 			homeComb,
 			newVip,
 			userInfor,
 			headerSerch,
 			swipers,
-			coupon,
 			articleList,
 			bargain,
 			blankPage,
@@ -254,7 +241,6 @@
 			richText,
 			videos,
 			// #endif
-			signIn,
 			hotspot,
 			follow,
 			waterfallsFlow,
@@ -270,11 +256,6 @@
 				limit: this.$config.LIMIT,
 				numConfig: 0,
 				code: '',
-				isCouponShow: false,
-				couponObj: {},
-				couponObjs: {
-					show: false
-				},
 				shareInfo: {},
 				sortList: '',
 				sortAll: [],
@@ -382,14 +363,13 @@
 			isLogin: {
 				deep: true, //深度监听设置为 true
 				handler: function(newV, oldV) {
-					// 优惠券弹窗
-					var newDates = new Date().toLocaleDateString();
 					if (newV) {
+						var newDates = new Date().toLocaleDateString();
 						try {
 							var oldDate = uni.getStorageSync('oldDate') || '';
 						} catch {}
 						if (oldDate != newDates) {
-							this.getCoupon();
+							uni.setStorageSync('oldDate', newDates);
 						}
 					}
 				}
@@ -397,9 +377,7 @@
 		},
 		onShow() {
 			uni.removeStorageSync('form_type_cart');
-			// 优惠券弹窗
 			if (this.isLogin) {
-				this.getCoupon();
 				this.getCartNum();
 			}
 			// #ifdef MP
@@ -632,54 +610,6 @@
 					this.goodPage++;
 					this.goodList = this.goodList.concat(res.data);
 				});
-			},
-			// 新用户优惠券
-			getNewCoupon() {
-				const oldUser = uni.getStorageSync('oldUser') || 0;
-				if (!oldUser) {
-					getCouponNewUser().then(res => {
-						const {
-							data
-						} = res;
-						if (data.show) {
-							if (data.list.length) {
-								this.isCouponShow = true;
-								this.couponObj = data;
-								uni.setStorageSync('oldUser', 1);
-							}
-						} else {
-							uni.setStorageSync('oldUser', 1);
-						}
-					});
-				}
-			},
-			// 优惠券弹窗
-			getCoupon() {
-				const tagDate = uni.getStorageSync('tagDate') || '',
-					nowDate = new Date().toLocaleDateString();
-				if (tagDate === nowDate) {
-					this.getNewCoupon();
-				} else {
-					getCouponV2().then(res => {
-						const {
-							data
-						} = res;
-						if (data.list.length) {
-							this.isCouponShow = true;
-							this.couponObj = data;
-							uni.setStorageSync('tagDate', new Date().toLocaleDateString());
-						} else {
-							this.getNewCoupon();
-						}
-					});
-				}
-			},
-			// 优惠券弹窗关闭
-			couponClose() {
-				this.isCouponShow = false;
-				if (!uni.getStorageSync('oldUser')) {
-					this.getNewCoupon();
-				}
 			},
 			onLoadFun() {
 				this.isShowAuth = false
