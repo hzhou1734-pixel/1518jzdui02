@@ -280,7 +280,7 @@
 			defaultSeckillConfig: {
 				name: 'seckill',
 				titleText: { tabVal: 0, tabList: [{ style: 'normal' }] },
-				titleColor: { color: [{ item: '#fff' }] },
+				titleColor: { color: [{ item: '#333' }] },
 				titleNumber: { val: 20 },
 				topConfig: { val: 12 },
 				prConfig: { val: 12 },
