@@ -46,36 +46,18 @@
 						<view class="wrapper">
 							<view class="share acea-row row-between row-bottom">
 								<view class="money font-color">
-									<text class="text">{{ $t(`到手价`) }}</text>
-									<baseMoney class="mr-12" :money="realPriceData.real_price" symbolSize="24" integerSize="40" decimalSize="24" weight color="var(--view-theme)"></baseMoney>
-									<text class="text text--w111-333">{{ $t(`售价`) }}</text>
-									<baseMoney class="mr-12" :money="realPriceData.price" symbolSize="24" integerSize="24" decimalSize="24" weight color="#333"></baseMoney>
-									<view
-										class="vip-money"
-										v-if="storeInfo.vip_price && storeInfo.vip_price > 0 && storeInfo.is_vip == 1 && svip_price_open == 1 && realPriceData.user_is_member == 0"
-									>
-										<view class="svip-tag">SVIP</view>
-										<view class="">{{ $t(`￥`) }}{{ realPriceData.member_price }}</view>
-									</view>
-								</view>
+								<text class="text">{{ $t(`到手价`) }}</text>
+								<baseMoney class="mr-12" :money="realPriceData.real_price" symbolSize="24" integerSize="40" decimalSize="24" weight color="var(--view-theme)"></baseMoney>
+							</view>
 								<view class="iconfont icon-fenxiang" @click="listenerActionSheet"></view>
 							</view>
-							<view class="introduce" v-text="storeInfo.store_name || ''"></view>
-							<view class="limit_good" v-if="storeInfo.limit_type > 0">
-								{{ storeInfo.limit_type == 1 ? $t(`单次限购`) : $t(`永久限购`) }}{{ storeInfo.limit_num }}{{ $t(storeInfo.unit_name) }}
-								<text class="line" v-if="storeInfo.limit_type > 0 && storeInfo.min_qty > 1">|</text>
-								<text v-if="storeInfo.min_qty > 1">{{ $t(`起购`) }}{{ storeInfo.min_qty + storeInfo.unit_name }}</text>
+						<view class="introduce" v-text="storeInfo.store_name || ''"></view>
+						<view class="label acea-row row-between-wrapper" style="padding-bottom: 20rpx">
+							<view class="delete-line">{{ $t(`￥`) }}{{ storeInfo.ot_price || 0 }}</view>
+							<view class="">
+								{{ $t(`销量`) }} : {{ storeInfo.fsales || 0 }}
+								{{ $t(storeInfo.unit_name) || '' }}
 							</view>
-							<view class="label acea-row row-between-wrapper" style="padding-bottom: 20rpx">
-								<view class="delete-line">{{ $t(`￥`) }}{{ storeInfo.ot_price || 0 }}</view>
-								<view class="">
-									{{ $t(`库存`) }} : {{ storeInfo.stock || 0 }}
-									{{ $t(storeInfo.unit_name) || '' }}
-								</view>
-								<view class="">
-									{{ $t(`销量`) }} : {{ storeInfo.fsales || 0 }}
-									{{ $t(storeInfo.unit_name) || '' }}
-								</view>
 							</view>
 							<!-- 商品标签 -->
 							<view class="flex flex-wrap mt-24 p-x-15" v-if="storeInfo.label_list && storeInfo.label_list.length">
@@ -91,14 +73,8 @@
 									:key="idx"
 								></BaseTag>
 							</view>
-							<view v-if="!is_money_level && storeInfo.vip_price && storeInfo.is_vip" class="svip acea-row row-between-wrapper">
-								<view class="">{{ $t(`开通“超级会员”立省`) }}{{ diff }}{{ $t(`元`) }}</view>
-								<navigator url="/pages/annex/vip_paid/index">
-									{{ $t(`立即开通`) }}
-									<text class="iconfont icon-jiantou"></text>
-								</navigator>
-							</view>
-							<view class="presell_count" v-if="storeInfo.presale">
+							<view v-if="!is_money_level && storeInfo.vip_price &&						</view>
+						<view class="presell_count" v-if="storeInfo.presale">
 								<view>
 									<view>{{ $t(`预售活动时间`) }}：</view>
 									<view v-if="storeInfo.presale_start_time && storeInfo.presale_end_time" class="presell_time">
@@ -127,33 +103,7 @@
 							</view>
 							<view class="coupon acea-row row-between-wrapper" v-if="activity.length">
 								<view class="line1 acea-row">
-									<text class="coupon-title">{{ $t(`活动`) }}：</text>
-									<view v-for="(item, index) in activity" :key="index" @click="goActivity(item)">
-										<view
-											v-if="item.type === '1' && $permission('seckill')"
-											:class="index == 0 ? 'activity_pin' : '' || index == 1 ? 'activity_miao' : '' || index == 2 ? 'activity_kan' : ''"
-										>
-											<text class="iconfonts iconfont icon-pintuan"></text>
-											<text class="activity_title">{{ $t(`参与秒杀`) }}</text>
-										</view>
-										<view
-											:class="index == 0 ? 'activity_pin' : '' || index == 1 ? 'activity_miao' : '' || index == 2 ? 'activity_kan' : ''"
-											v-if="item.type === '2' && $permission('bargain')"
-										>
-											<text class="iconfonts iconfont icon-shenhezhong"></text>
-											<text class="activity_title">{{ $t(`参与砍价`) }}</text>
-										</view>
-										<view
-											:class="index == 0 ? 'activity_pin' : '' || index == 1 ? 'activity_miao' : '' || index == 2 ? 'activity_kan' : ''"
-											v-if="item.type === '3' && $permission('combination')"
-										>
-											<text class="iconfonts iconfont icon-kanjia"></text>
-											<text class="activity_title">{{ $t(`参与拼团`) }}</text>
-										</view>
-									</view>
-								</view>
-							</view>
-						</view>
+											</view>
 						<view class="attribute acea-row row-between-wrapper" @click="selecAttr" v-if="attr.productAttr.length">
 							<view class="flex justify-between">
 								<view style="display: flex; align-items: center; width: 90%">
@@ -267,38 +217,64 @@
 							<!-- #endif -->
 							<!-- #ifdef APP-PLUS -->
 							<view class="description" v-html="description"></view>
-							<!-- #endif -->
-						</view>
+						<!-- #endif -->
 					</view>
-					<view class="uni-p-b-98"></view>
+				</view>
+				<!-- 课程评价信息 -->
+				<view class="course-evaluation" id="past4">
+					<view class="title">{{ $t(`课程评价`) }}</view>
+					<view class="conter">
+						<block v-if="courseEvaluations && courseEvaluations.length">
+							<view class="evaluation-item" v-for="(item, index) in courseEvaluations" :key="index">
+								<view class="eval-header acea-row row-between-wrapper">
+									<view class="acea-row row-middle">
+										<image :src="item.avatar" class="avatar" mode="aspectFill"></image>
+										<view class="eval-user">
+											<text class="user-name">{{ item.nickname }}</text>
+											<text class="user-time">{{ item.add_time }}</text>
+										</view>
+									</view>
+									<view class="eval-star">{{ item.star }}分</view>
+								</view>
+								<view class="eval-content">{{ item.comment }}</view>
+							</view>
+						</block>
+						<emptyPage v-else title="暂无评价，去学习吧～"></emptyPage>
+					</view>
+				</view>
+				<!-- 课程大纲 -->
+				<view class="course-outline" id="past5">
+					<view class="title">{{ $t(`课程大纲`) }}</view>
+					<view class="conter">
+						<!-- #ifndef APP-PLUS -->
+						<parser :html="courseOutline" ref="outlineParser" :tag-style="tagStyle"></parser>
+						<!-- #endif -->
+						<!-- #ifdef APP-PLUS -->
+						<view class="description" v-html="courseOutline"></view>
+						<!-- #endif -->
+					</view>
+				</view>
+				<!-- 授权老师 -->
+				<view class="auth-teacher" id="past6">
+					<view class="title">{{ $t(`授权老师`) }}</view>
+					<view class="conter">
+						<!-- #ifndef APP-PLUS -->
+						<parser :html="authTeacher" ref="teacherParser" :tag-style="tagStyle"></parser>
+						<!-- #endif -->
+						<!-- #ifdef APP-PLUS -->
+						<view class="description" v-html="authTeacher"></view>
+						<!-- #endif -->
+					</view>
+				</view>
+				<view class="uni-p-b-98"></view>
 				</scroll-view>
 			</view>
 
 			<view class="footer acea-row row-between-wrapper" :class="{ eject: storeInfo.id }">
-				<!-- <button open-type="contact" hover-class='none' class='item'>
-						<view class='iconfont icon-kefu'></view>
-						<view>客服</view>
-					</button> -->
-
 				<navigator v-if="!is_gift" hover-class="none" class="item" open-type="switchTab" url="/pages/index/index">
 					<view class="iconfont icon-shouye6"></view>
 					<view class="p_center">{{ $t(`首页`) }}</view>
 				</navigator>
-				<view @click="setCollect" class="item">
-					<view class="iconfont icon-shoucang1" v-if="storeInfo.userCollect"></view>
-					<view class="iconfont icon-shoucang" v-else></view>
-					<view class="p_center">{{ $t(`收藏`) }}</view>
-				</view>
-				<view class="animated item" :class="animated == true ? 'bounceIn' : ''" @click="goCart">
-					<view class="iconfont icon-gouwuche1">
-						<text class="num bg-color" v-if="parseFloat(CartCount) > 0">{{ CartCount || 0 }}</text>
-					</view>
-					<view class="p_center">{{ $t(`购物车`) }}</view>
-				</view>
-				<view v-if="is_gift" @click="goGift()" class="item">
-					<image class="gift-icon" src="@/static/images/gift-icon.png" mode=""></image>
-					<view class="p_center">{{ $t(`送礼物`) }}</view>
-				</view>
 				<view v-if="noGoods" class="presale">
 					<view class="acea-row">
 						<form class="bnts bg-color-hui">
@@ -308,28 +284,12 @@
 				</view>
 				<view v-else>
 					<view v-if="!storeInfo.presale">
-						<view class="bnt acea-row" :class="!storeInfo.cart_button ? 'virbnt' : ''" v-if="attr.productSelect.stock <= 0">
-							<form v-if="storeInfo.cart_button" @submit="joinCart" class="joinCart bnts" :class="!storeInfo.cart_button ? 'virbnt' : ''">
-								<button class="joinCart bnts" form-type="submit">
-									{{ $t(`加入购物车`) }}
-								</button>
+						<view class="bnt acea-row" :class="attr.productSelect.stock <= 0 ? 'virbnt' : ''">
+							<form v-if="attr.productSelect.stock <= 0" class="buy bnts bg-color-hui">
+								<button class="buy bnts bg-color-hui" form-type="submit">{{ $t(`已售罄`) }}</button>
 							</form>
-							<form class="buy bnts bg-color-hui">
-								<button class="buy bnts bg-color-hui" form-type="submit" :class="!storeInfo.cart_button ? 'virbnt' : ''">
-									{{ $t(`已售罄`) }}
-								</button>
-							</form>
-						</view>
-						<view class="bnt acea-row" v-else>
-							<form v-if="storeInfo.cart_button" @submit="joinCart" class="joinCart bnts">
-								<button class="joinCart bnts" form-type="submit">
-									{{ $t(`加入购物车`) }}
-								</button>
-							</form>
-							<form @submit="goBuy" class="buy bnts" :class="!storeInfo.cart_button ? 'virbnt' : ''">
-								<button class="buy bnts" :class="!storeInfo.cart_button ? 'virbnt' : ''" form-type="submit">
-									{{ $t(`立即购买`) }}
-								</button>
+							<form v-else @submit="goBuy" class="buy bnts">
+								<button class="buy bnts" form-type="submit">{{ $t(`立即购买`) }}</button>
 							</form>
 						</view>
 					</view>
@@ -351,17 +311,6 @@
 						</view>
 					</view>
 				</view>
-
-				<!-- 	<view v-else>
-						<view class="virbnt acea-row" :class="storeInfo.is_virtual?'virbnt':''" v-if="attr.productSelect.stock <= 0">
-							<form class="buy bnts bg-color-hui"><button class="virbuy virbnts bg-color-hui"
-									form-type="submit">已售罄</button></form>
-						</view>
-						<view class="virbnt acea-row" v-else>
-							<form @submit="goBuy" class="buy bnts"><button class="virbuy virbnts" form-type="submit">立即购买</button>
-							</form>
-						</view>
-					</view> -->
 			</view>
 			<shareRedPackets
 				:sharePacket="sharePacket"
@@ -625,6 +574,9 @@ export default {
 				video: 'width:100%;height:100%;'
 			},
 			returnShow: true, //判断顶部返回是否出现
+			courseEvaluations: [], // 课程评价列表
+			courseOutline: '', // 课程大纲（富文本）
+			authTeacher: '', // 授权老师（富文本）
 			diff: '',
 			is_money_level: 1,
 			is_vip: 0, //是否是会员
@@ -1095,8 +1047,18 @@ export default {
 					if (this.description) {
 						this.description = this.description.replace(/<img/gi, '<img style="max-width:100%;height:auto;float:left;display:block" ');
 						this.description = this.description.replace(/<video/gi, '<video style="width:100%;height:300px;display:block" ');
-					}
-					that.$set(that, 'presale_pay_status', res.data.storeInfo.presale_pay_status); // 1未开始; 2进行中; 3已结束
+					}				}
+				// 课程数据
+				that.$set(that, 'courseEvaluations', res.data.course_evaluations || []);
+				that.$set(that, 'courseOutline', res.data.course_outline || '');
+				that.$set(that, 'authTeacher', res.data.auth_teacher || '');
+				if (that.courseOutline) {
+					that.courseOutline = that.courseOutline.replace(/<img/gi, '<img style="max-width:100%;height:auto;float:left;display:block" ');
+				}
+				if (that.authTeacher) {
+					that.authTeacher = that.authTeacher.replace(/<img/gi, '<img style="max-width:100%;height:auto;float:left;display:block" ');
+				}
+				that.$set(that, 'presale_pay_status', res.data.storeInfo.presale_pay_status); // 1未开始; 2进行中; 3已结束
 					that.$set(that, 'reply', res.data.reply ? [res.data.reply] : []);
 					that.$set(that, 'replyCount', res.data.replyCount);
 					that.$set(that, 'replyChance', res.data.replyChance);
@@ -1131,10 +1093,7 @@ export default {
 					}
 					this.$set(this, 'selectSku', that.skuArr[0]);
 					that.$set(that, 'diff', that.$util.$h.Sub(storeInfo.price, storeInfo.vip_price));
-					var navList = [that.$t(`商品`), that.$t(`详情`)];
-					if (res.data.replyCount) {
-						navList.splice(1, 0, that.$t(`评价`));
-					}
+					var navList = [that.$t(`商品`), that.$t(`评价`), that.$t(`大纲`), that.$t(`老师`), that.$t(`详情`)];
 					// if (goodArray.length) {
 					// 	navList.splice(-1, 0, '推荐');
 					// }
@@ -1200,21 +1159,17 @@ export default {
 			var that = this,
 				topArr = [],
 				heightArr = [];
+			// 导航映射: 商品→past0, 评价→past1/课程评价past4, 大纲→past5, 老师→past6, 详情→past3
+			var pastIds = [
+				'past0',
+				that.replyCount ? 'past1' : 'past4',
+				'past5',
+				'past6',
+				'past3'
+			];
 			for (var i = 0; i < that.navList.length; i++) {
-				//productList
-				//获取元素所在位置
 				var query = uni.createSelectorQuery().in(this);
-				var idView = '#past' + i;
-				if (
-					(!this.replyCount && !that.good_list.length && i == 1) ||
-					(this.replyCount && !that.good_list.length && i == 2) ||
-					(!this.replyCount && that.good_list.length && i == 2)
-				) {
-					idView = '#past' + 3;
-				}
-				if (!this.replyCount && that.good_list.length && i == 1) {
-					idView = '#past' + 2;
-				}
+				var idView = '#' + pastIds[i];
 				query.select(idView).boundingClientRect();
 				query.exec(function (res) {
 					var top = res[0].top;
@@ -1873,28 +1828,21 @@ export default {
 }
 
 .product-con .footer .bnt {
-	width: 444rpx;
+	flex: 1;
 	height: 76rpx;
 }
 
 .product-con .footer .bnt .bnts {
-	width: 222rpx;
+	width: 100%;
 	text-align: center;
 	line-height: 76rpx;
 	color: #fff;
 	font-size: 28rpx;
 }
 
-.product-con .footer .bnt .joinCart {
-	border-radius: 50rpx 0 0 50rpx;
-	background-color: var(--view-bntColor);
-	// background-image: linear-gradient(to right, #fea10f 0%, #fa8013 100%);
-}
-
 .product-con .footer .bnt .buy {
-	border-radius: 0 50rpx 50rpx 0;
+	border-radius: 50rpx;
 	background-color: var(--view-theme);
-	// background-image: linear-gradient(to right, #fa6514 0%, #e93323 100%);
 }
 
 .product-con .store-info {
@@ -2464,5 +2412,73 @@ action-sheet-item {
 
 .delete-line {
 	text-decoration: line-through;
+}
+
+/* 课程详情新增板块 */
+.product-con .course-evaluation,
+.product-con .course-outline,
+.product-con .auth-teacher {
+	background-color: #fff;
+	margin-top: 20rpx;
+}
+
+.product-con .course-evaluation .title,
+.product-con .course-outline .title,
+.product-con .auth-teacher .title {
+	padding: 24rpx 30rpx;
+	font-size: 30rpx;
+	font-weight: bold;
+	color: #333;
+	border-bottom: 1rpx solid #f5f5f5;
+}
+
+.product-con .course-evaluation .conter,
+.product-con .course-outline .conter,
+.product-con .auth-teacher .conter {
+	padding: 24rpx 30rpx;
+}
+
+.product-con .evaluation-item {
+	padding: 20rpx 0;
+	border-bottom: 1rpx solid #f5f5f5;
+}
+
+.product-con .evaluation-item:last-child {
+	border-bottom: none;
+}
+
+.product-con .eval-header .avatar {
+	width: 64rpx;
+	height: 64rpx;
+	border-radius: 50%;
+	margin-right: 16rpx;
+}
+
+.product-con .eval-user {
+	display: flex;
+	flex-direction: column;
+}
+
+.product-con .eval-user .user-name {
+	font-size: 28rpx;
+	color: #333;
+}
+
+.product-con .eval-user .user-time {
+	font-size: 22rpx;
+	color: #999;
+	margin-top: 4rpx;
+}
+
+.product-con .eval-star {
+	font-size: 26rpx;
+	color: #E93323;
+}
+
+.product-con .eval-content {
+	font-size: 26rpx;
+	color: #666;
+	line-height: 1.6;
+	margin-top: 16rpx;
 }
 </style>
