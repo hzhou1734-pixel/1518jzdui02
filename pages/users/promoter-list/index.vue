@@ -22,8 +22,13 @@
 						v-model="keyword" @confirm="submitForm" confirm-type='search' name="search"></input></view>
 				<button class='iconfont icon-sousuo2' @click="submitForm"></button>
 			</view>
-			<view class='list'>
-				<view class="sortNav acea-row row-middle">
+		<view class="pay-filter acea-row row-middle">
+			<view :class="['filter-item', is_pay === '' ? 'on' : '']" @click="setPayFilter('')">{{$t(`全部`)}}</view>
+			<view :class="['filter-item', is_pay === '1' ? 'on' : '']" @click="setPayFilter('1')">{{$t(`已成交`)}}</view>
+			<view :class="['filter-item', is_pay === '0' ? 'on' : '']" @click="setPayFilter('0')">{{$t(`未成交`)}}</view>
+		</view>
+		<view class='list'>
+			<view class="sortNav acea-row row-middle">
 					<view class="sortItem" @click='setSort("childCount ASC")' v-if="sort == 'childCount DESC'">
 						{{$t(`团队排序`)}}
 						<image src='../static/sort1.png'></image>
@@ -56,7 +61,7 @@
 					</view>
 				</view>
 				<block v-for="(item,index) in recordList" :key="index">
-					<view class='item acea-row row-between-wrapper'>
+					<view class="item acea-row row-between-wrapper">
 						<view class="picTxt acea-row row-between-wrapper">
 							<view class='pictrue'>
 								<image :src='item.avatar'></image>
@@ -67,6 +72,7 @@
 							</view>
 						</view>
 						<view class="right">
+							<view class="pay-status" :class="item.is_pay == 1 ? 'paid' : 'unpaid'">{{item.is_pay == 1 ? $t('已成交') : $t('未成交')}}</view>
 							<view><text class='num font-num'>{{item.childCount ? item.childCount : 0}}</text>{{$t(`人`)}}
 							</view>
 							<view><text class="num">{{item.orderCount ? item.orderCount : 0}}</text>{{$t(`单`)}}</view>
@@ -128,6 +134,7 @@
 				keyword: '',
 				sort: '',
 				grade: 0,
+				is_pay: '',
 				status: false,
 				recordList: [],
 				isAuto: false, //没有授权的不会自动授权
@@ -185,6 +192,17 @@
 					this.limit = 20;
 					this.keyword = '';
 					this.sort = '';
+					this.is_pay = '';
+					this.status = false;
+					this.$set(this, 'recordList', []);
+					this.userSpreadNewList();
+				}
+			},
+			setPayFilter: function(is_pay) {
+				if (this.is_pay != is_pay) {
+					this.is_pay = is_pay;
+					this.page = 1;
+					this.limit = 20;
 					this.status = false;
 					this.$set(this, 'recordList', []);
 					this.userSpreadNewList();
@@ -209,6 +227,7 @@
 					keyword: keyword,
 					grade: grade,
 					sort: sort,
+					is_pay: that.is_pay,
 				}).then(res => {
 					let len = res.data.list.length;
 					let recordListData = res.data.list;
@@ -292,6 +311,48 @@
 		width: 110rpx;
 		height: 60rpx;
 		line-height: 60rpx;
+	}
+
+	.pay-filter {
+		background-color: #fff;
+		height: 80rpx;
+		padding: 0 30rpx;
+		border-bottom: 1rpx solid #eee;
+	}
+
+	.pay-filter .filter-item {
+		flex: 1;
+		text-align: center;
+		font-size: 26rpx;
+		color: #666;
+		height: 54rpx;
+		line-height: 54rpx;
+		border-radius: 27rpx;
+		margin: 0 10rpx;
+		background-color: #f5f5f5;
+	}
+
+	.pay-filter .filter-item.on {
+		background-color: var(--view-theme);
+		color: #fff;
+	}
+
+	.promoter-list .list .item .right .pay-status {
+		font-size: 22rpx;
+		padding: 2rpx 14rpx;
+		border-radius: 20rpx;
+		display: inline-block;
+		margin-bottom: 4rpx;
+	}
+
+	.pay-status.paid {
+		background-color: #e8f5e9;
+		color: #4caf50;
+	}
+
+	.pay-status.unpaid {
+		background-color: #fff3e0;
+		color: #ff9800;
 	}
 
 	.promoter-list .list {
