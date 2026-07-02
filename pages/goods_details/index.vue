@@ -158,7 +158,8 @@
 							<view class="eval-item" v-for="(item, index) in courseEvaluations.slice(0, 3)" :key="index">
 								<view class="eval-header acea-row row-between-wrapper">
 									<view class="eval-user acea-row row-middle">
-										<view class="eval-avatar" :style="{ backgroundColor: item.avatarColor || avatarColors[index % avatarColors.length] }">
+										<image v-if="item.avatar" class="eval-avatar" :src="item.avatar" mode="aspectFill"></image>
+										<view v-else class="eval-avatar" :style="{ backgroundColor: item.avatarColor || avatarColors[index % avatarColors.length] }">
 											{{ item.nickname ? item.nickname.charAt(0) : $t(`用`) }}
 										</view>
 										<view>
@@ -200,19 +201,37 @@
 						<!-- #endif -->
 						</view>
 					</view>
-				</view>
 				<!-- 课程大纲 -->
-				<view class="product-intro" id="past1" v-if="courseOutline">
+				<view class="product-intro" id="past1" v-if="courseOutline && courseOutline.length">
 					<view class="title">{{ $t(`课程大纲`) }}</view>
-					<view class="conter">
-						<parser :html="courseOutline" ref="outlineParser" :tag-style="tagStyle"></parser>
+					<view class="conter outline-conter">
+						<view class="chapter-group" v-for="(chapter, ci) in courseOutline" :key="ci">
+							<view class="chapter-title">
+								<text>{{ chapter.title }}</text>
+								<text class="chapter-count">{{ chapter.count }}</text>
+							</view>
+							<view class="outline-item" v-for="(lesson, li) in chapter.lessons" :key="li">
+								<view class="outline-num">{{ lesson.num }}</view>
+								<text class="outline-name">{{ lesson.name }}</text>
+								<text class="outline-dur" v-if="lesson.dur">{{ lesson.dur }}</text>
+							</view>
+						</view>
 					</view>
 				</view>
 				<!-- 授课老师 -->
-				<view class="product-intro" id="past2" v-if="authTeacher">
+				<view class="product-intro" id="past2" v-if="authTeacher && authTeacher.length">
 					<view class="title">{{ $t(`授课老师`) }}</view>
-					<view class="conter">
-						<parser :html="authTeacher" ref="teacherParser" :tag-style="tagStyle"></parser>
+					<view class="conter teacher-conter">
+						<view class="teacher-card" v-for="(teacher, ti) in authTeacher" :key="ti">
+							<view class="teacher-avatar-lg" :style="{ background: teacher.bgColor || 'linear-gradient(135deg, #667eea, #764ba2)' }">
+								{{ teacher.name ? teacher.name.charAt(0) : $t('师') }}
+							</view>
+							<view class="teacher-info">
+								<view class="teacher-name-lg">{{ teacher.name }}</view>
+								<view class="teacher-title-lg">{{ teacher.title }}</view>
+								<view class="teacher-bio">{{ teacher.bio }}</view>
+							</view>
+						</view>
 					</view>
 				</view>
 				<view class="uni-p-b-98"></view>
@@ -317,9 +336,6 @@
 				<image class="poster-img" :src="posterImage"></image>
 				<!-- #ifndef H5  -->
 				<view class="save-poster" @click="savePosterPath">{{ $t(`保存到手机`) }}</view>
-				<!-- #endif -->
-				<!-- #ifdef H5 -->
-				<view class="keep">{{ $t(`长按图片可以保存到手机`) }}</view>
 				<!-- #endif -->
 			</view>
 			<view class="mask" v-if="posterImageStatus"></view>
@@ -501,8 +517,53 @@ export default {
 			returnShow: true, //判断顶部返回是否出现
 			courseEvaluations: [], // 课程评价
 			avatarColors: ['#E93323', '#FF9500', '#34C759', '#007AFF', '#AF52DE', '#FF2D55'], // 评价头像背景色
-			courseOutline: '', // 课程大纲（富文本）
-			authTeacher: '', // 授权老师（富文本）
+			courseOutline: [
+				{
+					title: '第一部分：基础知识入门',
+					count: '共5章 · 24课时',
+					lessons: [
+						{ num: 1, name: '课程介绍与学习目标', dur: '3课时' },
+						{ num: 2, name: '核心概念解析', dur: '6课时' },
+						{ num: 3, name: '环境搭建与工具准备', dur: '4课时' },
+						{ num: 4, name: '第一个示例项目', dur: '5课时' },
+						{ num: 5, name: '常见问题与解决方案', dur: '6课时' },
+					],
+				},
+				{
+					title: '第二部分：核心技能进阶',
+					count: '共4章 · 32课时',
+					lessons: [
+						{ num: 6, name: '深入原理剖析', dur: '10课时' },
+						{ num: 7, name: '常用框架与组件', dur: '8课时' },
+						{ num: 8, name: '数据交互与接口调用', dur: '8课时' },
+						{ num: 9, name: '性能优化技巧', dur: '6课时' },
+					],
+				},
+				{
+					title: '第三部分：实战项目演练',
+					count: '共4章 · 28课时',
+					lessons: [
+						{ num: 10, name: '项目需求分析与架构设计', dur: '6课时' },
+						{ num: 11, name: '核心功能模块开发（上）', dur: '8课时' },
+						{ num: 12, name: '核心功能模块开发（下）', dur: '8课时' },
+						{ num: 13, name: '测试与部署上线', dur: '6课时' },
+					],
+				},
+			], // 课程大纲（假数据）
+			authTeacher: [
+				{
+					name: '王国栋 老师',
+					title: '资深技术专家 / 金牌讲师',
+					bio: '曾任多家知名互联网企业技术负责人与架构师，拥有10年以上项目实战经验。累计培养学员超过5000人，授课风格深入浅出，善于将复杂原理用生活化案例讲解。独创"考点地图记忆法"，帮助大量学员顺利通过考试。',
+					bgColor: 'linear-gradient(135deg, #E93323, #FF6B35)',
+				},
+				{
+					name: '李明慧 老师',
+					title: '高级工程师 / 特聘讲师',
+					bio: '毕业于知名高校，曾就职于头部科技公司担任核心开发。擅长将理论与实践相结合，注重培养学员独立思考和解决问题的能力。多次获得"年度最佳讲师"称号，深受学员喜爱。',
+					bgColor: 'linear-gradient(135deg, #667eea, #764ba2)',
+				},
+			], // 授课老师（假数据）
 			diff: '',
 			is_money_level: 1,
 			is_vip: 0, //是否是会员
@@ -970,9 +1031,21 @@ export default {
 					}
 					that.$set(that, 'storeInfo', storeInfo);
 				that.$set(that, 'description', storeInfo.description);
-				that.$set(that, 'courseEvaluations', res.data.course_evaluations || []);
-				that.$set(that, 'courseOutline', res.data.course_outline || '');
-				that.$set(that, 'authTeacher', res.data.auth_teacher || '');
+				let replyData = res.data.reply;
+				let evaluationList = [];
+				if (replyData) {
+					// reply 可能是单个对象或数组
+					let replyList = Array.isArray(replyData) ? replyData : [replyData];
+					evaluationList = replyList.map(item => ({
+						nickname: item.nickname || '',
+						avatar: item.avatar || '',
+						star: item.star || item.product_score || 5,
+						content: item.comment || '',
+					}));
+				}
+				that.$set(that, 'courseEvaluations', evaluationList);
+				that.$set(that, 'courseOutline', (res.data.course_outline && res.data.course_outline.length) ? res.data.course_outline : that.courseOutline);
+				that.$set(that, 'authTeacher', (res.data.auth_teacher && res.data.auth_teacher.length) ? res.data.auth_teacher : that.authTeacher);
 				if (this.description) {
 						this.description = this.description.replace(/<img/gi, '<img style="max-width:100%;height:auto;float:left;display:block" ');
 						this.description = this.description.replace(/<video/gi, '<video style="width:100%;height:300px;display:block" ');
@@ -1968,19 +2041,19 @@ action-sheet-item {
 
 .canvas {
 	z-index: 300;
-	width: 750px;
-	height: 1190px;
+	width: 1000px;
+	height: 1587px;
 }
 
 .poster-pop {
-	width: 450rpx;
-	height: 714rpx;
+	width: 600rpx;
+	height: 952rpx;
 	position: fixed;
 	left: 50%;
 	transform: translateX(-50%);
 	z-index: 399;
 	top: 50%;
-	margin-top: -377rpx;
+	margin-top: -496rpx;
 	.poster-img {
 		border-radius: 6px;
 	}
@@ -2530,6 +2603,145 @@ action-sheet-item {
 
 .empty-state .empty-page {
 	padding: 40rpx 0;
+}
+
+/* ========== 课程大纲样式 ========== */
+.outline-conter {
+	padding: 0;
+	background: transparent;
+}
+
+.chapter-group {
+	margin-bottom: 28rpx;
+}
+
+.chapter-group:last-child {
+	margin-bottom: 0;
+}
+
+.chapter-title {
+	font-size: 28rpx;
+	font-weight: 600;
+	color: #333;
+	margin-bottom: 12rpx;
+	display: flex;
+	align-items: center;
+	gap: 8rpx;
+	padding: 16rpx 0 8rpx;
+}
+
+.chapter-title::before {
+	content: '';
+	display: inline-block;
+	width: 6rpx;
+	height: 28rpx;
+	background: #E93323;
+	border-radius: 3rpx;
+	flex-shrink: 0;
+}
+
+.chapter-count {
+	font-size: 22rpx;
+	color: #B0B0B0;
+	font-weight: 400;
+	margin-left: 8rpx;
+}
+
+.outline-item {
+	font-size: 26rpx;
+	color: #666;
+	padding: 16rpx 0 16rpx 20rpx;
+	border-bottom: 1rpx solid #F5F5F5;
+	display: flex;
+	align-items: center;
+	gap: 12rpx;
+}
+
+.outline-item:last-child {
+	border-bottom: none;
+}
+
+.outline-num {
+	width: 36rpx;
+	height: 36rpx;
+	border-radius: 50%;
+	background: #FFF5F5;
+	color: #E93323;
+	font-size: 20rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	font-weight: 600;
+}
+
+.outline-name {
+	flex: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.outline-dur {
+	font-size: 22rpx;
+	color: #B0B0B0;
+	flex-shrink: 0;
+}
+
+/* ========== 授课老师样式 ========== */
+.teacher-conter {
+	padding: 0;
+	background: transparent;
+}
+
+.teacher-card {
+	background: #fff;
+	padding: 28rpx 24rpx;
+	display: flex;
+	gap: 20rpx;
+	align-items: flex-start;
+	border-radius: 12rpx;
+	margin-bottom: 20rpx;
+	box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.teacher-card:last-child {
+	margin-bottom: 0;
+}
+
+.teacher-avatar-lg {
+	width: 96rpx;
+	height: 96rpx;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 36rpx;
+	color: #fff;
+	flex-shrink: 0;
+}
+
+.teacher-info {
+	flex: 1;
+}
+
+.teacher-name-lg {
+	font-size: 30rpx;
+	font-weight: 600;
+	color: #333;
+}
+
+.teacher-title-lg {
+	font-size: 22rpx;
+	color: #E93323;
+	margin-top: 6rpx;
+}
+
+.teacher-bio {
+	font-size: 24rpx;
+	color: #666;
+	line-height: 1.7;
+	margin-top: 14rpx;
 }
 
 /* 底部 */

@@ -38,49 +38,36 @@
 					<view class="" :style="'width:100%;' + 'height:' + sysHeight"></view>
 					<!-- #endif -->
 					<productConSwiper :imgUrls="imgUrls" @showSwiperImg="showSwiperImg"></productConSwiper>
-					<view class="bg-color">
-						<view class="nav acea-row row-between-wrapper">
-							<view class="money">
-								{{ $t(`￥`) }}
-								<text class="num">{{ storeInfo.price || '' }}</text>
-								<text v-if="attribute.productAttr.length && (attribute.productAttr.length ? attribute.productAttr[0].attr_values.length : 0) > 1">{{ $t(`起`) }}</text>
-								<text class="y-money">{{ $t(`￥`) }}{{ storeInfo.ot_price || '' }}</text>
-							</view>
-							<view class="acea-row row-middle">
-								<view class="timeItem" v-if="status == 1">
-									<view>{{ $t(`距秒杀结束仅剩`) }}</view>
-									<countDown
-										:is-day="false"
-										:tip-text="' '"
-										:day-text="' '"
-										:hour-text="' : '"
-										:minute-text="' : '"
-										:second-text="' '"
-										:datatime="datatime"
-										style="margin-top: 4rpx"
-									></countDown>
-								</view>
-								<!-- <view class="timeState" wx:if="{{status == 0}}">已结束</view>
-						  <view class="timeState" wx:if="{{status == 2}}">即将开始</view> -->
-								<!-- <view class='iconfont icon-jiantou'></view> -->
-							</view>
-						</view>
-					</view>
 					<view class="wrapper">
-						<view class="introduce acea-row row-between">
+						<view class="introduce course-title acea-row row-between">
 							<view class="infor">{{ storeInfo.title || '' }}</view>
-							<!-- <button class='iconfont icon-fenxiang' open-type='share'></button> -->
-							<view class="iconfont icon-fenxiang" @click="listenerActionSheet"></view>
+							<view class="iconfont icon-fenxiang course-share-icon" @click="listenerActionSheet"></view>
+						</view>
+						<view class="share acea-row row-between row-bottom course-price-wrap">
+							<view class="acea-row row-bottom">
+								<view class="course-price font-color">{{ $t(`￥`) }}<text class="price-num">{{ storeInfo.price || '' }}</text></view>
+								<text class="course-ot-price" v-if="storeInfo.ot_price">{{ $t(`￥`) }}{{ storeInfo.ot_price || '' }}</text>
+							</view>
+							<view class="timeItem" v-if="status == 1">
+								<view>{{ $t(`距秒杀结束仅剩`) }}</view>
+								<countDown
+									:is-day="false"
+									:tip-text="' '"
+									:day-text="' '"
+									:hour-text="' : '"
+									:minute-text="' : '"
+									:second-text="' '"
+									:datatime="datatime"
+									style="margin-top:4rpx"
+								></countDown>
+							</view>
 						</view>
 						<view class="label acea-row row-middle">
-							<!-- <view class='stock'>库存：{{storeInfo.stock}}{{storeInfo.unit_name}}</view> -->
 							<view class="stock">{{ $t(`累计销售`) }}：{{ storeInfo.total ? storeInfo.total : 0 }}{{ $t(storeInfo.unit_name) || '' }}</view>
 							<view>{{ $t(`限量剩余`) }}: {{ storeInfo.quota ? storeInfo.quota : 0 }}{{ $t(storeInfo.unit_name) || '' }}</view>
 						</view>
 					</view>
 					<view class="attribute acea-row row-between-wrapper" @tap="selecAttr" v-if="attribute.productAttr.length">
-						<!-- 	<view>{{attr}}：<text class='atterTxt'>{{attrValue}}</text></view>
-						<view class='iconfont icon-jiantou'></view> -->
 						<view class="flex">
 							<view style="display: flex; align-items: center; width: 90%">
 								<view class="attr-txt">{{ attr }}：</view>
@@ -96,23 +83,53 @@
 						</view>
 					</view>
 				</view>
-				<view class="userEvaluation" id="past1" v-if="replyCount">
+				<!-- 课程评价 -->
+				<view class="course-evaluation" v-if="courseEvaluations.length">
 					<view class="title acea-row row-between-wrapper">
-						<view>{{ $t(`用户评价`) }}({{ replyCount }})</view>
-						<navigator class="praise" hover-class="none" :url="'/pages/goods/goods_comment_list/index?product_id=' + storeInfo.product_id">
-							<text class="font-color">{{ replyChance }}%</text>
-							{{ $t(`好评率`) }}
-							<text class="iconfont icon-jiantou"></text>
-						</navigator>
+						<view class="acea-row row-middle">
+							<view class="title-tag"></view>
+							<text class="title-text">{{ $t(`课程评价`) }}({{ courseEvaluations.length }})</text>
+						</view>
 					</view>
-					<userEvaluation :reply="reply"></userEvaluation>
+					<view class="eval-list">
+						<view class="eval-item" v-for="(item, index) in courseEvaluations.slice(0, 3)" :key="index">
+							<view class="eval-header acea-row row-between-wrapper">
+								<view class="eval-user acea-row row-middle">
+									<image v-if="item.avatar" class="eval-avatar" :src="item.avatar" mode="aspectFill"></image>
+									<view v-else class="eval-avatar" :style="{ backgroundColor: item.avatarColor || avatarColors[index % avatarColors.length] }">
+										{{ item.nickname ? item.nickname.charAt(0) : $t(`用`) }}
+									</view>
+									<view>
+										<view class="eval-name">{{ item.nickname }}</view>
+										<view class="eval-stars">
+											<text class="iconfont icon-xing" v-for="n in 5" :key="n" :class="n <= item.star ? 'on' : ''"></text>
+										</view>
+									</view>
+								</view>
+							</view>
+							<view class="eval-content">{{ item.content }}</view>
+						</view>
+					</view>
+					<view class="eval-more acea-row row-center-wrapper" @click="goCourseEvaluations">
+						<text>{{ $t(`查看全部`) }} {{ courseEvaluations.length }} {{ $t(`条评价`) }}</text>
+						<text class="iconfont icon-jiantou"></text>
+					</view>
 				</view>
-				<view class="product-intro" id="past2">
-					<view class="title">{{ $t(`产品介绍`) }}</view>
+				<view v-if="!courseEvaluations.length" class="course-evaluation empty-state">
+					<view class="title acea-row row-between-wrapper">
+						<view class="acea-row row-middle">
+							<view class="title-tag"></view>
+							<text class="title-text">{{ $t(`课程评价`) }}</text>
+						</view>
+					</view>
+					<view class="empty-page">
+						<view class="empty-icon iconfont icon-pinglun"></view>
+						<view>{{ $t(`暂无课程评价`) }}</view>
+					</view>
+				</view>
+				<view class="product-intro" id="past0-detail">
+					<view class="title">{{ $t(`课程详情`) }}</view>
 					<view class="conter">
-						<!-- <view class="" v-html="storeInfo.description">
-						</view> -->
-
 						<!-- #ifndef APP-PLUS -->
 						<parser :html="storeInfo.description" ref="article" :tag-style="tagStyle"></parser>
 						<!-- #endif -->
@@ -121,45 +138,52 @@
 						<!-- #endif -->
 					</view>
 				</view>
+				<!-- 课程大纲 -->
+				<view class="product-intro" id="past1" v-if="courseOutlineData && courseOutlineData.length">
+					<view class="title">{{ $t(`课程大纲`) }}</view>
+					<view class="conter outline-conter">
+						<view class="chapter-group" v-for="(chapter, ci) in courseOutlineData" :key="ci">
+							<view class="chapter-title">
+								<text>{{ chapter.title }}</text>
+								<text class="chapter-count">{{ chapter.count }}</text>
+							</view>
+							<view class="outline-item" v-for="(lesson, li) in chapter.lessons" :key="li">
+								<view class="outline-num">{{ lesson.num }}</view>
+								<text class="outline-name">{{ lesson.name }}</text>
+								<text class="outline-dur" v-if="lesson.dur">{{ lesson.dur }}</text>
+							</view>
+						</view>
+					</view>
+				</view>
+				<!-- 授课老师 -->
+				<view class="product-intro" id="past2" v-if="authTeacherData && authTeacherData.length">
+					<view class="title">{{ $t(`授课老师`) }}</view>
+					<view class="conter teacher-conter">
+						<view class="teacher-card" v-for="(teacher, ti) in authTeacherData" :key="ti">
+							<view class="teacher-avatar-lg" :style="{ background: teacher.bgColor || 'linear-gradient(135deg, #667eea, #764ba2)' }">
+								{{ teacher.name ? teacher.name.charAt(0) : $t('师') }}
+							</view>
+							<view class="teacher-info">
+								<view class="teacher-name-lg">{{ teacher.name }}</view>
+								<view class="teacher-title-lg">{{ teacher.title }}</view>
+								<view class="teacher-bio">{{ teacher.bio }}</view>
+							</view>
+						</view>
+					</view>
+				</view>
 				<view class="uni-p-b-98"></view>
 			</scroll-view>
-			<view class="footer acea-row row-between-wrapper" :class="{ eject: storeInfo.id }">
-				<navigator hover-class="none" open-type="switchTab" class="item" url="/pages/index/index">
-					<view class="iconfont icon-shouye6"></view>
-					<view class="p_center">{{ $t(`首页`) }}</view>
-				</navigator>
-				<view @tap="setCollect" class="item">
-					<view class="iconfont icon-shoucang1" v-if="storeInfo.userCollect"></view>
-					<view class="iconfont icon-shoucang" v-else></view>
-					<view class="p_center">{{ $t(`收藏`) }}</view>
+			<view class="footer acea-row row-between-wrapper course-footer" :class="{ eject: storeInfo.id }">
+				<view class="share-item acea-row row-column row-center-wrapper" @click="listenerActionSheet">
+					<view class="iconfont icon-fenxiang"></view>
+					<view class="share-text">{{ $t(`分享`) }}</view>
 				</view>
-				<view class="bnt acea-row" v-if="status == 1 && attribute.productSelect.quota > 0 && attribute.productSelect.product_stock > 0">
-					<view class="joinCart bnts" @tap="openAlone" v-if="storeInfo.product_is_show">{{ $t(`单独购买`) }}</view>
-					<view class="buy bnts" :class="!storeInfo.product_is_show ? 'long-btn' : ''" @tap="goCat">{{ $t(`立即购买`) }}</view>
-				</view>
-				<view
-					class="bnt acea-row"
-					v-if="
-						(status == 1 && attribute.productSelect.quota <= 0) ||
-						(status == 3 && attribute.productSelect.quota <= 0) ||
-						(status == 1 && attribute.productSelect.product_stock <= 0) ||
-						(status == 3 && attribute.productSelect.product_stock <= 0)
-					"
-				>
-					<view class="joinCart bnts" @tap="openAlone" v-if="storeInfo.product_is_show">{{ $t(`单独购买`) }}</view>
-					<view class="buy bnts bg-color-hui" :class="!storeInfo.product_is_show ? 'long-btn' : ''">{{ $t(`已售罄`) }}</view>
-				</view>
-				<view class="bnt acea-row" v-if="!dataShow && status == 1">
-					<view class="joinCart bnts" @tap="openAlone" v-if="storeInfo.product_is_show">{{ $t(`单独购买`) }}</view>
-					<view class="buy bnts bg-color-hui" :class="!storeInfo.product_is_show ? 'long-btn' : ''">{{ $t(`立即购买`) }}</view>
-				</view>
-				<view class="bnt acea-row" v-if="status == 2">
-					<view class="joinCart bnts" @tap="openAlone" v-if="storeInfo.product_is_show">{{ $t(`单独购买`) }}</view>
-					<view class="buy bnts bg-color-hui" :class="!storeInfo.product_is_show ? 'long-btn' : ''">{{ $t(`未开始`) }}</view>
-				</view>
-				<view class="bnt acea-row" v-if="status == 0">
-					<view class="joinCart bnts" @tap="openAlone" v-if="storeInfo.product_is_show">{{ $t(`单独购买`) }}</view>
-					<view class="buy bnts bg-color-hui" :class="!storeInfo.product_is_show ? 'long-btn' : ''">{{ $t(`已结束`) }}</view>
+				<view class="buy-btn-wrap">
+					<view class="buy bnts course-buy-btn" @tap="goCat" v-if="status == 1 && attribute.productSelect.quota > 0 && attribute.productSelect.product_stock > 0 && dataShow">{{ $t(`立即购买`) }}</view>
+					<view class="buy bnts bg-color-hui course-buy-btn" v-if="(status == 1 && attribute.productSelect.quota <= 0) || (status == 3 && attribute.productSelect.quota <= 0) || (status == 1 && attribute.productSelect.product_stock <= 0) || (status == 3 && attribute.productSelect.product_stock <= 0)">{{ $t(`已售罄`) }}</view>
+					<view class="buy bnts bg-color-hui course-buy-btn" v-if="!dataShow && status == 1">{{ $t(`加载中`) }}</view>
+					<view class="buy bnts bg-color-hui course-buy-btn" v-if="status == 2">{{ $t(`未开始`) }}</view>
+					<view class="buy bnts bg-color-hui course-buy-btn" v-if="status == 0">{{ $t(`已结束`) }}</view>
 				</view>
 			</view>
 		</view>
@@ -218,9 +242,6 @@
 			<!-- #ifndef H5  -->
 			<view class="save-poster" @click="savePosterPath">{{ $t(`保存到手机`) }}</view>
 			<!-- #endif -->
-			<!-- #ifdef H5 -->
-			<view class="keep">{{ $t(`长按图片可以保存到手机`) }}</view>
-			<!-- #endif -->
 		</view>
 		<view class="mask1" v-if="posterImageStatus"></view>
 		<canvas class="canvas" canvas-id="myCanvas" v-if="canvasStatus"></canvas>
@@ -259,7 +280,6 @@ import { postCartAdd, collectAdd, collectDel } from '@/api/store.js';
 import productConSwiper from '@/components/productConSwiper/index.vue';
 import swiperPrevie from '@/components/cusPreviewImg/swiperPrevie.vue';
 import productWindow from '@/components/productWindow/index.vue';
-import userEvaluation from '@/components/userEvaluation/index.vue';
 import kefuIcon from '@/components/kefuIcon';
 // #ifdef MP
 import authorize from '@/components/Authorize';
@@ -286,7 +306,6 @@ export default {
 	components: {
 		productConSwiper,
 		productWindow: productWindow,
-		userEvaluation,
 		kefuIcon,
 		menuIcon,
 		countDown,
@@ -335,7 +354,56 @@ export default {
 			reply: [], //评论列表
 			replyChance: 0,
 			navH: '',
-			navList: [this.$t(`商品`), this.$t(`评价`), this.$t(`详情`)],
+			navList: [this.$t(`课程详情`), this.$t(`课程大纲`), this.$t(`授课老师`)],
+			courseEvaluations: [], // 课程评价
+			avatarColors: ['#E93323', '#FF9500', '#34C759', '#007AFF', '#AF52DE', '#FF2D55'],
+			courseOutlineData: [ // 课程大纲假数据
+				{
+					title: '第一部分：基础知识入门',
+					count: '共5章 · 24课时',
+					lessons: [
+						{ num: 1, name: '课程介绍与学习目标', dur: '3课时' },
+						{ num: 2, name: '核心概念解析', dur: '6课时' },
+						{ num: 3, name: '环境搭建与工具准备', dur: '4课时' },
+						{ num: 4, name: '第一个示例项目', dur: '5课时' },
+						{ num: 5, name: '常见问题与解决方案', dur: '6课时' },
+					],
+				},
+				{
+					title: '第二部分：核心技能进阶',
+					count: '共4章 · 32课时',
+					lessons: [
+						{ num: 6, name: '深入原理剖析', dur: '10课时' },
+						{ num: 7, name: '常用框架与组件', dur: '8课时' },
+						{ num: 8, name: '数据交互与接口调用', dur: '8课时' },
+						{ num: 9, name: '性能优化技巧', dur: '6课时' },
+					],
+				},
+				{
+					title: '第三部分：实战项目演练',
+					count: '共4章 · 28课时',
+					lessons: [
+						{ num: 10, name: '项目需求分析与架构设计', dur: '6课时' },
+						{ num: 11, name: '核心功能模块开发（上）', dur: '8课时' },
+						{ num: 12, name: '核心功能模块开发（下）', dur: '8课时' },
+						{ num: 13, name: '测试与部署上线', dur: '6课时' },
+					],
+				},
+			],
+			authTeacherData: [ // 授课老师假数据
+				{
+					name: '王国栋 老师',
+					title: '资深技术专家 / 金牌讲师',
+					bio: '曾任多家知名互联网企业技术负责人与架构师，拥有10年以上项目实战经验。累计培养学员超过5000人，授课风格深入浅出，善于将复杂原理用生活化案例讲解。',
+					bgColor: 'linear-gradient(135deg, #E93323, #FF6B35)',
+				},
+				{
+					name: '李明慧 老师',
+					title: '高级工程师 / 特聘讲师',
+					bio: '毕业于知名高校，曾就职于头部科技公司担任核心开发。擅长将理论与实践相结合，注重培养学员独立思考和解决问题的能力。',
+					bgColor: 'linear-gradient(135deg, #667eea, #764ba2)',
+				},
+			],
 			opacity: 0,
 			scrollY: 0,
 			topArr: [],
@@ -546,6 +614,19 @@ export default {
 					this.replyCount = res.data.replyCount;
 					this.reply = res.data.reply ? [res.data.reply] : [];
 					this.replyChance = res.data.replyChance;
+					// 映射后台评论数据为课程评价格式
+					let replyData = res.data.reply;
+					let evaluationList = [];
+					if (replyData) {
+						let replyList = Array.isArray(replyData) ? replyData : [replyData];
+						evaluationList = replyList.map(item => ({
+							nickname: item.nickname || '',
+							avatar: item.avatar || '',
+							star: item.star || item.product_score || 5,
+							content: item.comment || '',
+						}));
+					}
+					that.$set(that, 'courseEvaluations', evaluationList);
 					that.routineContact = Number(res.data.routine_contact_type);
 					uni.setNavigationBarTitle({
 						title: title.substring(0, 7) + '...'
@@ -555,10 +636,7 @@ export default {
 						that.skuArr.push(obj);
 					}
 					this.$set(this, 'selectSku', that.skuArr[0]);
-					var navList = [that.$t(`商品`), that.$t(`详情`)];
-					if (res.data.replyCount) {
-						navList.splice(1, 0, that.$t(`评价`));
-					}
+					var navList = [that.$t(`课程详情`), that.$t(`课程大纲`), that.$t(`授课老师`)];
 					that.$set(that, 'navList', navList);
 					// #ifdef H5 || APP-PLUS
 					// this.PromotionCode = res.data.storeInfo.code_base
@@ -846,12 +924,9 @@ export default {
 			this.showMenuIcon = data;
 		},
 		tap: function (item, index) {
-			var id = item.id;
+			var id = 'past' + index;
 			var index = index;
 			var that = this;
-			if (!this.replyCount && id == 'past1') {
-				id = 'past2';
-			}
 			this.toView = id;
 			this.navActive = index;
 			this.lock = true;
@@ -862,13 +937,8 @@ export default {
 				topArr = [],
 				heightArr = [];
 			for (var i = 0; i < that.navList.length; i++) {
-				//productList
-				//获取元素所在位置
 				var query = wx.createSelectorQuery().in(this);
 				var idView = '#past' + i;
-				if (!this.replyCount && i == 1) {
-					idView = '#past' + 2;
-				}
 				query.select(idView).boundingClientRect();
 				query.exec(function (res) {
 					var top = res[0].top;
@@ -1099,6 +1169,11 @@ export default {
 		},
 		showSwiperImg(index) {
 			this.$refs.cusSwiperImg.open(index);
+		},
+		goCourseEvaluations() {
+			uni.navigateTo({
+				url: '/pages/goods/goods_comment_list/index?product_id=' + this.storeInfo.product_id
+			});
 		}
 	},
 	//#ifdef MP
@@ -1351,78 +1426,324 @@ export default {
 	margin-right: 28rpx;
 }
 
-.product-con .footer {
-	padding: 0 20rpx 0 30rpx;
+.product-con .footer.course-footer {
+	padding: 0 30rpx;
 	position: fixed;
 	bottom: 0;
 	width: 100%;
 	box-sizing: border-box;
-	background-color: rgba(255, 255, 255, 0.85);
+	background-color: rgba(255, 255, 255, 0.97);
 	backdrop-filter: blur(10px);
 	z-index: 277;
 	border-top: 1rpx solid #f0f0f0;
 	height: 100rpx;
-	height: calc(100rpx + constant(safe-area-inset-bottom)); ///兼容 IOS<11.2/
-	height: calc(100rpx + env(safe-area-inset-bottom)); ///兼容 IOS>11.2/
+	height: calc(100rpx + constant(safe-area-inset-bottom));
+	height: calc(100rpx + env(safe-area-inset-bottom));
 	transform: translate3d(0, 100%, 0);
 	transition: all 0.3s cubic-bezier(0.25, 0.5, 0.5, 0.9);
 }
 
-.product-con .footer .item {
-	font-size: 18rpx;
+.product-con .footer.course-footer.eject {
+	transform: translate3d(0, 0, 0);
+}
+
+.product-con .footer.course-footer .share-item {
+	font-size: 22rpx;
+	color: #666;
+	width: 100rpx;
+}
+
+.product-con .footer.course-footer .share-item .iconfont {
+	font-size: 42rpx;
 	color: #666;
 }
 
-.product-con .footer .item .iconfont {
-	text-align: center;
-	font-size: 40rpx;
+.product-con .footer.course-footer .share-text {
+	font-size: 20rpx;
+	color: #999;
+	margin-top: 2rpx;
 }
 
-.product-con .footer .item .iconfont.icon-shoucang1 {
+.product-con .footer.course-footer .buy-btn-wrap {
+	flex: 1;
+	margin-left: 20rpx;
+}
+
+.course-buy-btn {
+	width: 100%;
+	height: 76rpx;
+	line-height: 76rpx;
+	text-align: center;
+	color: #fff;
+	font-size: 30rpx;
+	border-radius: 50rpx;
+	background: linear-gradient(135deg, #E93323, #FF6B35);
+}
+
+/* 课程评价样式 */
+.course-evaluation {
+	background: #fff;
+	margin: 20rpx 0;
+	padding: 30rpx;
+}
+
+.course-evaluation .title {
+	margin-bottom: 24rpx;
+}
+
+.course-evaluation .title-tag {
+	width: 8rpx;
+	height: 36rpx;
+	background: var(--view-theme);
+	border-radius: 4rpx;
+	margin-right: 16rpx;
+}
+
+.course-evaluation .title-text {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+}
+
+.eval-list {
+	padding: 0;
+}
+
+.eval-item {
+	padding: 24rpx 0;
+	border-bottom: 1rpx solid #f5f5f5;
+}
+
+.eval-item:last-child {
+	border-bottom: none;
+}
+
+.eval-user {
+	flex: 1;
+}
+
+.eval-avatar {
+	width: 72rpx;
+	height: 72rpx;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #fff;
+	font-size: 28rpx;
+	font-weight: bold;
+	margin-right: 16rpx;
+	flex-shrink: 0;
+}
+
+.eval-name {
+	font-size: 28rpx;
+	color: #333;
+	font-weight: 500;
+}
+
+.eval-stars {
+	margin-top: 6rpx;
+}
+
+.eval-stars .iconfont {
+	font-size: 24rpx;
+	color: #ddd;
+	margin-right: 4rpx;
+}
+
+.eval-stars .iconfont.on {
+	color: #FFB800;
+}
+
+.eval-content {
+	font-size: 26rpx;
+	color: #666;
+	margin-top: 16rpx;
+	line-height: 1.6;
+}
+
+.eval-more {
+	margin-top: 24rpx;
+	font-size: 26rpx;
 	color: var(--view-theme);
 }
 
-.product-con .footer .item .iconfont.icon-gouwuche1 {
-	font-size: 40rpx;
-	position: relative;
+.eval-more .iconfont {
+	margin-left: 6rpx;
+	font-size: 22rpx;
 }
 
-.product-con .footer .item .iconfont.icon-gouwuche1 .num {
-	color: #fff;
-	position: absolute;
-	font-size: 18rpx;
-	padding: 2rpx 8rpx 3rpx;
-	border-radius: 200rpx;
-	top: -10rpx;
-	right: -10rpx;
-}
-
-.product-con .footer .bnt {
-	width: 540rpx;
-	height: 76rpx;
-}
-.product-con .footer .bnt .bnts.long-btn {
-	width: 540rpx;
-	border-radius: 50px;
-}
-.product-con .footer .bnt .bnts {
-	width: 270rpx;
+/* 空状态 */
+.course-evaluation.empty-state .empty-page {
+	padding: 40rpx 0;
 	text-align: center;
-	line-height: 76rpx;
+	color: #ccc;
+	font-size: 26rpx;
+}
+
+.empty-icon {
+	font-size: 60rpx;
+	color: #eee;
+	margin-bottom: 16rpx;
+}
+
+/* 课程价格样式 */
+.course-title {
+	margin-bottom: 16rpx;
+}
+
+.course-title .infor {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+	width: 570rpx;
+	line-height: 1.4;
+}
+
+.course-share-icon {
+	font-size: 40rpx;
+	color: #666;
+}
+
+.course-price-wrap {
+	margin-bottom: 16rpx;
+}
+
+.course-price {
+	font-size: 48rpx;
+	font-weight: bold;
+	color: var(--view-theme);
+}
+
+.course-price .price-num {
+	font-size: 48rpx;
+}
+
+.course-ot-price {
+	font-size: 26rpx;
+	color: #999;
+	text-decoration: line-through;
+	margin-left: 12rpx;
+	align-self: flex-end;
+	padding-bottom: 6rpx;
+}
+
+/* 倒计时 */
+.course-price-wrap .timeItem {
+	font-size: 20rpx;
+	color: var(--view-theme);
+	text-align: center;
+}
+
+/* 课程大纲样式 */
+.outline-conter {
+	padding: 0 30rpx 30rpx;
+}
+
+.chapter-group {
+	margin-bottom: 32rpx;
+}
+
+.chapter-title {
+	font-size: 30rpx;
+	font-weight: bold;
+	color: #333;
+	padding: 20rpx 0;
+	border-bottom: 2rpx solid #f0f0f0;
+	padding-left: 20rpx;
+	border-left: 6rpx solid var(--view-theme);
+}
+
+.chapter-count {
+	font-size: 24rpx;
+	font-weight: normal;
+	color: #999;
+	margin-left: 16rpx;
+}
+
+.outline-item {
+	display: flex;
+	align-items: center;
+	padding: 20rpx 0 20rpx 30rpx;
+	border-bottom: 1rpx solid #f8f8f8;
+}
+
+.outline-num {
+	width: 40rpx;
+	height: 40rpx;
+	border-radius: 50%;
+	background: #f5f5f5;
+	color: #999;
+	font-size: 22rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-right: 16rpx;
+	flex-shrink: 0;
+}
+
+.outline-name {
+	flex: 1;
+	font-size: 26rpx;
+	color: #333;
+}
+
+.outline-dur {
+	font-size: 22rpx;
+	color: #bbb;
+	flex-shrink: 0;
+}
+
+/* 授课老师样式 */
+.teacher-conter {
+	padding: 0 30rpx 30rpx;
+}
+
+.teacher-card {
+	display: flex;
+	align-items: flex-start;
+	padding: 30rpx;
+	margin-bottom: 24rpx;
+	background: #fafafa;
+	border-radius: 16rpx;
+}
+
+.teacher-avatar-lg {
+	width: 100rpx;
+	height: 100rpx;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	color: #fff;
-	font-size: 28rpx;
+	font-size: 40rpx;
+	font-weight: bold;
+	margin-right: 24rpx;
+	flex-shrink: 0;
 }
 
-.product-con .footer .bnt .joinCart {
-	border-radius: 50rpx 0 0 50rpx;
-	// background-image: linear-gradient(to right, #fea10f 0%, #fa8013 100%);
-	background-color: var(--view-bntColor);
+.teacher-info {
+	flex: 1;
 }
 
-.product-con .footer .bnt .buy {
-	border-radius: 0 50rpx 50rpx 0;
-	background-color: var(--view-theme);
-	// background-image: linear-gradient(to right, #fa6514 0%, #e93323 100%);
+.teacher-name-lg {
+	font-size: 30rpx;
+	font-weight: bold;
+	color: #333;
+	margin-bottom: 6rpx;
+}
+
+.teacher-title-lg {
+	font-size: 24rpx;
+	color: var(--view-theme);
+	margin-bottom: 12rpx;
+}
+
+.teacher-bio {
+	font-size: 24rpx;
+	color: #666;
+	line-height: 1.7;
 }
 
 .product-con .conter {
@@ -1444,19 +1765,20 @@ export default {
 }
 
 .canvas {
-	width: 750px;
-	height: 1190px;
+	width: 1000px;
+	height: 1587px;
+	z-index: 300;
 }
 
 .poster-pop {
-	width: 450rpx;
-	height: 714rpx;
+	width: 600rpx;
+	height: 952rpx;
 	position: fixed;
 	left: 50%;
 	transform: translateX(-50%);
 	z-index: 300;
 	top: 50%;
-	margin-top: -377rpx;
+	margin-top: -496rpx;
 }
 
 .poster-pop image {
@@ -1482,13 +1804,6 @@ export default {
 	height: 76rpx;
 	line-height: 76rpx;
 	width: 100%;
-}
-
-.poster-pop .keep {
-	color: #fff;
-	text-align: center;
-	font-size: 25rpx;
-	margin-top: 10rpx;
 }
 
 /deep/.mask {

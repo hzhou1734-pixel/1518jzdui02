@@ -184,19 +184,19 @@ export default {
 		 * 
 		 */
 		ctx.fillStyle = '#fff';
-		ctx.fillRect(0, 0, 750, 1250);
+		ctx.fillRect(0, 0, 1000, 1667);
 		uni.getImageInfo({
 			src: arr2[0],
 			success: function(res) {
 				const WIDTH = res.width;
 				const HEIGHT = res.height;
-				// ctx.drawImage(arr2[0], 0, 0, WIDTH, 1050);
-				ctx.drawImage(arr2[1], 0, 0, WIDTH, WIDTH);
+				// ctx.drawImage(arr2[0], 0, 0, 1000, 1050);
+				ctx.drawImage(arr2[1], 0, 0, 1000, 1000);
 				ctx.save();
-				let r = 110;
+				let r = 147;
 				let d = r * 2;
-				let cx = 480;
-				let cy = 790;
+				let cx = 640;
+				let cy = 1053;
 				ctx.arc(cx + r, cy + r, r, 0, 2 * Math.PI);
 				// ctx.clip();
 				ctx.drawImage(arr2[2], cx, cy, d, d);
@@ -211,28 +211,28 @@ export default {
 					contentArray = textArray;
 				}
 				ctx.setTextAlign('left');
-				ctx.setFontSize(36);
+				ctx.setFontSize(48);
 				ctx.setFillStyle('#000');
 				// let contentHh = 36 * 1.5;
-				let contentHh = 36;
+				let contentHh = 48;
 				for (let m = 0; m < contentArray.length; m++) {
 					if (m) {
-						ctx.fillText(contentArray[m], 50, 1000 + contentHh * m + 18, 1100);
+						ctx.fillText(contentArray[m], 67, 1333 + contentHh * m + 24, 1467);
 					} else {
-						ctx.fillText(contentArray[m], 50, 1000 + contentHh * m, 1100);
+						ctx.fillText(contentArray[m], 67, 1333 + contentHh * m, 1467);
 					}
 				}
 				ctx.setTextAlign('left')
-				ctx.setFontSize(72);
+				ctx.setFontSize(96);
 				ctx.setFillStyle('#DA4F2A');
-				ctx.fillText(i18n.t(`￥`) + price, 40, 820 + contentHh);
+				ctx.fillText(i18n.t(`￥`) + price, 53, 1093 + contentHh);
 
 				ctx.setTextAlign('left')
-				ctx.setFontSize(36);
+				ctx.setFontSize(48);
 				ctx.setFillStyle('#999');
 
 				if (ot_price) {
-					ctx.fillText(i18n.t(`￥`) + ot_price, 50, 876 + contentHh);
+					ctx.fillText(i18n.t(`￥`) + ot_price, 67, 1168 + contentHh);
 					var underline = function(ctx, text, x, y, size, color, thickness, offset) {
 						var width = ctx.measureText(text).width;
 						switch (ctx.textAlign) {
@@ -253,12 +253,12 @@ export default {
 						ctx.lineTo(x + width, y);
 						ctx.stroke();
 					}
-					underline(ctx, i18n.t(`￥`) + ot_price, 55, 865, 36, '#999', 2, 0)
+					underline(ctx, i18n.t(`￥`) + ot_price, 73, 1153, 48, '#999', 2, 0)
 				}
 				ctx.setTextAlign('left')
-				ctx.setFontSize(28);
+				ctx.setFontSize(37);
 				ctx.setFillStyle('#999');
-				ctx.fillText(i18n.t(`长按或扫描查看`), 490, 1030 + contentHh);
+				ctx.fillText(i18n.t(`长按或扫描查看`), 653, 1373 + contentHh);
 				ctx.draw(true, function() {
 					uni.canvasToTempFilePath({
 						canvasId: 'myCanvas',

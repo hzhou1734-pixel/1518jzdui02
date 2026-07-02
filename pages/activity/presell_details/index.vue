@@ -1672,19 +1672,19 @@
 
 	.canvas {
 		z-index: 300;
-		width: 750px;
-		height: 1190px;
+		width: 1000px;
+		height: 1587px;
 	}
 
 	.poster-pop {
-		width: 450rpx;
-		height: 714rpx;
+		width: 600rpx;
+		height: 952rpx;
 		position: fixed;
 		left: 50%;
 		transform: translateX(-50%);
 		z-index: 399;
 		top: 50%;
-		margin-top: -357rpx;
+		margin-top: -496rpx;
 	}
 
 	.poster-pop image {

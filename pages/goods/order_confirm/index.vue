@@ -108,22 +108,16 @@
 			<view class='wrapper' v-if="!is_gift || is_gift == 1">
 				<view class='item acea-row row-between-wrapper' @tap='couponTap'
 					v-if="!pinkId && !BargainId && !combinationId && !seckillId&& !noCoupon && !discountId && !advanceId">
-					<view>{{$t(`优惠券`)}}</view>
+					<view>{{$t(`优惠`)}}</view>
 					<view class='discount'>
-						{{couponTitle}}
-						<text class='iconfont icon-jiantou'></text>
+						（-{{$t(`￥`)}}{{parseFloat(coupon_price || 0).toFixed(2)}}）<text class='iconfont icon-jiantou'></text>
 					</view>
 				</view>
 				<view class='item acea-row row-between-wrapper'
-					v-if="!pinkId && !BargainId && !combinationId && !seckillId && !advanceId && integral_open">
-					<view>{{$t(`积分抵扣`)}}</view>
-					<view class='discount acea-row row-middle'>
-						<view> {{useIntegral ? $t(`剩余积分`):$t(`当前积分`)}}
-							<text class='num font-color'>{{integral || 0}}</text>
-						</view>
-						<checkbox-group @change="ChangeIntegral">
-							<checkbox :disabled="integral<=0 && !useIntegral" :checked='useIntegral ? true : false' />
-						</checkbox-group>
+					v-if="!pinkId && !BargainId && !combinationId && !seckillId && !discountId && !advanceId">
+					<view>{{$t(`听课手机号`)}}</view>
+					<view class='discount'>
+						<input style="text-align: right;" v-model="coursePhone" type="number" :placeholder="$t(`请输入听课手机号`)" placeholder-class="placeholder" maxlength="11"></input>
 					</view>
 				</view>
 				<view v-if="invoice_func || special_invoice" class='item acea-row row-between-wrapper' @tap="goInvoice">
@@ -452,6 +446,7 @@
 				gift_mark: '这是送您的一份礼物~', // 礼物留言
 				contacts: '',
 				contactsTel: '',
+				coursePhone: '', // 听课手机号
 				mydata: {},
 				storeList: [],
 				store_self_mention: 0,
@@ -735,7 +730,7 @@
 				let shippingType = this.shippingType;
 				let data = {
 					addressId: this.addressId,
-					useIntegral: this.useIntegral ? 1 : 0,
+					useIntegral: 0,
 					couponId: this.couponId,
 					shipping_type: parseInt(shippingType) + 1,
 					payType: this.payType
@@ -840,13 +835,6 @@
 				this.couponId = couponId;
 				this.$set(this.coupon, 'coupon', false);
 				this.$set(this.coupon, 'list', list);
-				this.computedPrice();
-			},
-			/**
-			 * 使用积分抵扣
-			 */
-			ChangeIntegral: function() {
-				this.useIntegral = !this.useIntegral;
 				this.computedPrice();
 			},
 			/**
@@ -1151,6 +1139,11 @@
 						title: that.$t(`暂无门店,请选择其他方式`)
 					});
 				}
+				if (that.coursePhone && !/^1(3|4|5|7|8|9|6)\d{9}$/.test(that.coursePhone)) {
+					return that.$util.Tips({
+						title: that.$t(`请输入正确的听课手机号`)
+					});
+				}
 				for (var i = 0; i < that.confirm.length; i++) {
 					let data = that.confirm[i]
 					if (data.status) {
@@ -1202,10 +1195,11 @@
 					gift_mark: that.gift_mark, // 礼物留言
 					real_name: that.contacts,
 					phone: that.contactsTel,
+					course_phone: that.coursePhone,
 					addressId: that.addressId,
 					formId: '',
 					couponId: that.couponId,
-					useIntegral: that.useIntegral,
+					useIntegral: false,
 					bargainId: that.BargainId,
 					combinationId: that.combinationId,
 					discountId: that.discountId,
