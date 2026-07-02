@@ -44,20 +44,13 @@
 							@showSwiperImg="showSwiperImg"
 						></productConSwiper>
 						<view class="wrapper">
+							<view class="introduce course-title" v-text="storeInfo.store_name || ''"></view>
 							<view class="share acea-row row-between row-bottom">
-							<view class="money font-color">
-								<text class="text">{{ $t(`到手价`) }}</text>
-								<baseMoney class="mr-12" :money="realPriceData.real_price" symbolSize="24" integerSize="40" decimalSize="24" weight color="var(--view-theme)"></baseMoney>
-							</view>
-								<view class="iconfont icon-fenxiang" @click="listenerActionSheet"></view>
-							</view>
-						<view class="introduce" v-text="storeInfo.store_name || ''"></view>
-						<view class="label acea-row row-between-wrapper" style="padding-bottom: 20rpx">
-							<view class="delete-line">{{ $t(`￥`) }}{{ storeInfo.ot_price || 0 }}</view>
-							<view class="">
-								{{ $t(`销量`) }} : {{ storeInfo.fsales || 0 }}
-								{{ $t(storeInfo.unit_name) || '' }}
-							</view>
+								<view class="acea-row row-bottom">
+									<baseMoney class="mr-12 course-price" :money="realPriceData.real_price" symbolSize="24" integerSize="48" decimalSize="28" weight color="var(--view-theme)"></baseMoney>
+									<text class="course-ot-price">{{ $t(`￥`) }}{{ storeInfo.ot_price || 0 }}</text>
+								</view>
+								<view class="iconfont icon-fenxiang course-share-icon" @click="listenerActionSheet"></view>
 							</view>
 							<!-- 商品标签 -->
 							<view class="flex flex-wrap mt-24 p-x-15" v-if="storeInfo.label_list && storeInfo.label_list.length">
@@ -153,61 +146,51 @@
 							</view>
 						</view>
 					</view>
-					<view class="userEvaluation" id="past1" v-if="replyCount">
+					<!-- 课程评价 -->
+					<view class="course-evaluation" v-if="courseEvaluations.length">
 						<view class="title acea-row row-between-wrapper">
-							<view>{{ $t(`用户评价`) }}({{ replyCount }})</view>
-							<navigator class="praise" hover-class="none" :url="'/pages/goods/goods_comment_list/index?product_id=' + id">
-								<text class="font-num">{{ replyChance }}%</text>
-								{{ $t(`好评率`) }}
-								<text class="iconfont icon-jiantou"></text>
-							</navigator>
-						</view>
-						<block v-if="replyCount">
-							<userEvaluation :reply="reply"></userEvaluation>
-						</block>
-					</view>
-					<!-- 优品推荐 -->
-					<view class="superior" v-if="good_list.length" id="past2">
-						<view class="title acea-row row-center-wrapper">
-							<view class="lingw acea-row row-center-wrapper">
-								<view class="lingn"></view>
-							</view>
-							<view class="titleTxt">{{ $t(`优品推荐`) }}</view>
-							<view class="lingw acea-row row-center-wrapper">
-								<view class="lingn"></view>
+							<view class="acea-row row-middle">
+								<view class="title-tag"></view>
+								<text class="title-text">{{ $t(`课程评价`) }}({{ courseEvaluations.length }})</text>
 							</view>
 						</view>
-						<view class="slider-banner banner">
-							<swiper
-								indicator-dots="true"
-								:autoplay="autoplay"
-								:circular="circular"
-								:interval="interval"
-								:duration="duration"
-								indicator-color="#999"
-								indicator-active-color="var(--view-theme)"
-								:style="'height:' + clientHeight + 'px'"
-							>
-								<swiper-item v-for="(item, indexw) in good_list" :key="indexw">
-									<view class="list acea-row row-middle" :id="'list' + indexw">
-										<view class="item" v-for="(val, indexn) in item.list" :key="indexn" @click="goDetail(val)">
-											<view class="pictrue">
-												<image :src="val.image"></image>
-												<span class="pictrue_log pictrue_log_class" v-if="val.activity && val.activity.type === '1' && $permission('seckill')">{{ $t(`秒杀`) }}</span>
-												<span class="pictrue_log pictrue_log_class" v-if="val.activity && val.activity.type === '2' && $permission('bargain')">{{ $t(`砍价`) }}</span>
-												<span class="pictrue_log pictrue_log_class" v-if="val.activity && val.activity.type === '3' && $permission('combination')">{{ $t(`拼团`) }}</span>
+						<view class="eval-list">
+							<view class="eval-item" v-for="(item, index) in courseEvaluations.slice(0, 3)" :key="index">
+								<view class="eval-header acea-row row-between-wrapper">
+									<view class="eval-user acea-row row-middle">
+										<view class="eval-avatar" :style="{ backgroundColor: item.avatarColor || avatarColors[index % avatarColors.length] }">
+											{{ item.nickname ? item.nickname.charAt(0) : $t(`用`) }}
+										</view>
+										<view>
+											<view class="eval-name">{{ item.nickname }}</view>
+											<view class="eval-stars">
+												<text class="iconfont icon-xing" v-for="n in 5" :key="n" :class="n <= item.star ? 'on' : ''"></text>
 											</view>
-											<view class="name line1">{{ val.store_name }}</view>
-											<view class="money font-color">{{ $t(`￥`) }}{{ val.price }}</view>
 										</view>
 									</view>
-								</swiper-item>
-								<!-- <view class="swiper-pagination" slot="pagination"></view> -->
-							</swiper>
+								</view>
+								<view class="eval-content">{{ item.content }}</view>
+							</view>
+						</view>
+						<view class="eval-more acea-row row-center-wrapper" @click="goCourseEvaluations">
+							<text>{{ $t(`查看全部`) }} {{ courseEvaluations.length }} {{ $t(`条评价`) }}</text>
+							<text class="iconfont icon-jiantou"></text>
 						</view>
 					</view>
-					<view class="product-intro" id="past3">
-						<view class="title">{{ $t(`产品介绍`) }}</view>
+					<view v-if="!courseEvaluations.length" class="course-evaluation empty-state">
+						<view class="title acea-row row-between-wrapper">
+							<view class="acea-row row-middle">
+								<view class="title-tag"></view>
+								<text class="title-text">{{ $t(`课程评价`) }}</text>
+							</view>
+						</view>
+						<view class="empty-page">
+							<view class="empty-icon iconfont icon-pinglun"></view>
+							<view>{{ $t(`暂无课程评价`) }}</view>
+						</view>
+					</view>
+					<view class="product-intro" id="past0-detail">
+						<view class="title">{{ $t(`课程详情`) }}</view>
 						<view class="conter">
 							<!-- #ifndef APP-PLUS -->
 							<parser :html="description" ref="article" :tag-style="tagStyle"></parser>
@@ -215,43 +198,19 @@
 							<!-- #ifdef APP-PLUS -->
 							<view class="description" v-html="description"></view>
 						<!-- #endif -->
-					</view>
-				</view>
-				<!-- 课程评价 -->
-				<view class="product-intro" id="past4" v-if="courseEvaluations.length">
-					<view class="title">{{ $t(`课程评价`) }}</view>
-					<view class="conter">
-						<view class="evaluation-list">
-							<view class="eval-item" v-for="(item, index) in courseEvaluations" :key="index">
-								<view class="eval-header acea-row row-between-wrapper">
-									<view class="eval-user acea-row row-middle">
-										<image class="eval-avatar" :src="item.avatar" mode="aspectFill"></image>
-										<view>
-											<view class="eval-name">{{ item.nickname }}</view>
-											<view class="eval-time">{{ item.create_time }}</view>
-										</view>
-									</view>
-									<view class="eval-star">{{ item.star }} 分</view>
-								</view>
-								<view class="eval-content">{{ item.content }}</view>
-							</view>
-						</view>
-						<view v-if="!courseEvaluations.length" class="empty-page">
-							<view class="empty-icon iconfont icon-pinglun"></view>
-							<view>{{ $t(`暂无课程评价`) }}</view>
 						</view>
 					</view>
 				</view>
 				<!-- 课程大纲 -->
-				<view class="product-intro" id="past5" v-if="courseOutline">
+				<view class="product-intro" id="past1" v-if="courseOutline">
 					<view class="title">{{ $t(`课程大纲`) }}</view>
 					<view class="conter">
 						<parser :html="courseOutline" ref="outlineParser" :tag-style="tagStyle"></parser>
 					</view>
 				</view>
-				<!-- 授权老师 -->
-				<view class="product-intro" id="past6" v-if="authTeacher">
-					<view class="title">{{ $t(`授权老师`) }}</view>
+				<!-- 授课老师 -->
+				<view class="product-intro" id="past2" v-if="authTeacher">
+					<view class="title">{{ $t(`授课老师`) }}</view>
 					<view class="conter">
 						<parser :html="authTeacher" ref="teacherParser" :tag-style="tagStyle"></parser>
 					</view>
@@ -260,24 +219,24 @@
 				</scroll-view>
 			</view>
 
-			<view class="footer acea-row row-between-wrapper" :class="{ eject: storeInfo.id }">
-			<navigator v-if="!is_gift" hover-class="none" class="item" open-type="switchTab" url="/pages/index/index">
-				<view class="iconfont icon-shouye6"></view>
-				<view class="p_center">{{ $t(`首页`) }}</view>
-			</navigator>
-			<view v-if="noGoods" class="presale">
-				<view class="acea-row">
-					<form class="bnts bg-color-hui">
-						<button class="bnts bg-color-hui" form-type="submit">{{ $t(`暂无产品`) }}</button>
+			<view class="footer acea-row row-between-wrapper course-footer" :class="{ eject: storeInfo.id }">
+				<view class="share-item acea-row row-column row-center-wrapper" @click="listenerActionSheet">
+					<view class="iconfont icon-fenxiang"></view>
+					<view class="share-text">{{ $t(`分享`) }}</view>
+				</view>
+				<view v-if="noGoods" class="presale">
+					<view class="acea-row">
+						<form class="bnts bg-color-hui">
+							<button class="bnts bg-color-hui" form-type="submit">{{ $t(`暂无产品`) }}</button>
+						</form>
+					</view>
+				</view>
+				<view v-else class="buy-btn-wrap">
+					<form @submit="goBuy" class="buy bnts">
+						<button class="buy bnts" form-type="submit">{{ $t(`立即购买`) }}</button>
 					</form>
 				</view>
 			</view>
-			<view v-else class="buy-btn-wrap">
-				<form @submit="goBuy" class="buy bnts">
-					<button class="buy bnts" form-type="submit">{{ $t(`立即购买`) }}</button>
-				</form>
-			</view>
-		</view>
 			<shareRedPackets
 				:sharePacket="sharePacket"
 				@listenerActionSheet="listenerActionSheet"
@@ -541,6 +500,7 @@ export default {
 			},
 			returnShow: true, //判断顶部返回是否出现
 			courseEvaluations: [], // 课程评价
+			avatarColors: ['#E93323', '#FF9500', '#34C759', '#007AFF', '#AF52DE', '#FF2D55'], // 评价头像背景色
 			courseOutline: '', // 课程大纲（富文本）
 			authTeacher: '', // 授权老师（富文本）
 			diff: '',
@@ -1052,18 +1012,9 @@ export default {
 					}
 					this.$set(this, 'selectSku', that.skuArr[0]);
 					that.$set(that, 'diff', that.$util.$h.Sub(storeInfo.price, storeInfo.vip_price));
-		var navList = [that.$t(`商品`)]; // past0
-		if (res.data.replyCount) navList.push(that.$t(`评价`)); // past1 用户评价
-		if (goodArray.length) navList.push(that.$t(`推荐`)); // past2
-		navList.push(that.$t(`详情`)); // past3 产品介绍
-		if (res.data.course_evaluations && res.data.course_evaluations.length) navList.push(that.$t(`课程评价`)); // past4
-		if (res.data.course_outline) navList.push(that.$t(`大纲`)); // past5
-		if (res.data.auth_teacher) navList.push(that.$t(`老师`)); // past6
+		// 固定顶部导航：课程详情 / 课程大纲 / 授课老师
+		var navList = [that.$t(`课程详情`), that.$t(`课程大纲`), that.$t(`授课老师`)];
 		that.$set(that, 'navList', navList);
-					// if (goodArray.length) {
-					// 	navList.splice(-1, 0, '推荐');
-					// }
-					that.$set(that, 'navList', navList);
 					that.$set(that, 'storeImage', that.storeInfo.image);
 					that.$set(that, 'svip_price_open', res.data.svip_price_open);
 					if (that.isLogin) {
@@ -1450,6 +1401,14 @@ export default {
 				this.$refs.proSwiper.videoIsPause();
 				this.goCat(true);
 			}
+		},
+		/**
+		 * 查看全部课程评价
+		 */
+		goCourseEvaluations() {
+			uni.navigateTo({
+				url: '/pages/goods/goods_comment_list/index?product_id=' + this.id
+			});
 		},
 		open(data) {
 			this.showMenuIcon = data;
@@ -2460,9 +2419,152 @@ action-sheet-item {
 	font-size: 26rpx;
 }
 
-.empty-page image {
-	width: 200rpx;
-	height: 200rpx;
-	margin-bottom: 20rpx;
+.course-title {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: #333;
+	line-height: 1.4;
+	padding-top: 24rpx;
+}
+
+.course-price {
+	font-weight: bold;
+}
+
+.course-ot-price {
+	font-size: 26rpx;
+	color: #999;
+	text-decoration: line-through;
+	margin-bottom: 8rpx;
+	margin-left: 16rpx;
+}
+
+.course-share-icon {
+	font-size: 40rpx;
+	color: #666;
+	padding: 10rpx;
+}
+
+/* 课程评价 */
+.course-evaluation {
+	background: #fff;
+	padding: 24rpx 30rpx;
+	margin-top: 20rpx;
+}
+
+.course-evaluation .title {
+	margin-bottom: 24rpx;
+}
+
+.course-evaluation .title-tag {
+	width: 8rpx;
+	height: 32rpx;
+	background: #ffcc99;
+	border-radius: 4rpx;
+	margin-right: 16rpx;
+}
+
+.course-evaluation .title-text {
+	font-size: 30rpx;
+	font-weight: bold;
+	color: #333;
+}
+
+.eval-list .eval-item {
+	padding-bottom: 28rpx;
+	margin-bottom: 28rpx;
+	border-bottom: 1rpx solid #f5f5f5;
+}
+
+.eval-list .eval-item:last-child {
+	border-bottom: none;
+	margin-bottom: 0;
+}
+
+.eval-user .eval-avatar {
+	width: 72rpx;
+	height: 72rpx;
+	border-radius: 50%;
+	color: #fff;
+	font-size: 28rpx;
+	font-weight: bold;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-right: 20rpx;
+}
+
+.eval-user .eval-name {
+	font-size: 28rpx;
+	color: #333;
+	margin-bottom: 8rpx;
+}
+
+.eval-stars .iconfont {
+	font-size: 22rpx;
+	color: #ddd;
+	margin-right: 4rpx;
+}
+
+.eval-stars .iconfont.on {
+	color: #FF9500;
+}
+
+.eval-content {
+	font-size: 28rpx;
+	color: #555;
+	line-height: 1.6;
+	margin-top: 16rpx;
+}
+
+.eval-more {
+	margin-top: 12rpx;
+	font-size: 26rpx;
+	color: #E93323;
+}
+
+.eval-more .iconfont {
+	font-size: 22rpx;
+	margin-left: 6rpx;
+}
+
+.empty-state .empty-page {
+	padding: 40rpx 0;
+}
+
+/* 底部 */
+.course-footer {
+	padding: 0 30rpx;
+}
+
+.course-footer .share-item {
+	width: 120rpx;
+	color: #666;
+}
+
+.course-footer .share-item .iconfont {
+	font-size: 44rpx;
+	margin-bottom: 4rpx;
+}
+
+.course-footer .share-text {
+	font-size: 22rpx;
+}
+
+.course-footer .buy-btn-wrap {
+	flex: 1;
+	height: 84rpx;
+	margin-left: 20rpx;
+}
+
+.course-footer .buy-btn-wrap .buy {
+	width: 100%;
+	height: 100%;
+	border-radius: 42rpx;
+	background: linear-gradient(90deg, #FF7931, #E93323);
+	color: #fff;
+	font-size: 30rpx;
+	font-weight: bold;
+	line-height: 84rpx;
 }
 </style>
