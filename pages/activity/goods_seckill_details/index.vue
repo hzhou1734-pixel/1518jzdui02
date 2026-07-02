@@ -16,17 +16,6 @@
 		</view>
 		<view id="home" class="home-nav acea-row row-center-wrapper" :class="[opacity > 0.5 ? 'on' : '']" :style="{ top: homeTop + 'rpx' }">
 			<view class="iconfont icon-fanhui2" @tap="returns"></view>
-			<!-- #ifdef MP -->
-			<view class="line"></view>
-			<view class="iconfont icon-gengduo5" @click="moreNav"></view>
-			<!-- #endif -->
-		</view>
-		<!-- #endif -->
-
-		<!-- #ifdef H5 -->
-		<view id="home" class="home-nav right acea-row row-center-wrapper" :class="[opacity > 0.5 ? 'on' : '']" :style="{ top: homeTop + 'rpx' }">
-			<!-- #ifdef  H5 -->
-			<view class="iconfont icon-gengduo2" @click="moreNav"></view>
 		</view>
 		<!-- #endif -->
 		<!-- #endif -->
