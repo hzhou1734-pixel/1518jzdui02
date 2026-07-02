@@ -90,14 +90,7 @@
 								<view class="text-right">{{ form.nickname }}</view>
 							</view>
 						</view>
-						<view class="item">
-							<view class="acea-row row-middle row-between">
-								<!-- <i class="icon iconfont icon-yonghu3"></i> -->
-								<text class="item-name">{{$t(`用户ID`)}}</text>
-								<view class="fs-28 text-right">{{ form.uid }}123</view>
-							</view>
-						</view>
-						<view class="item">
+					<view class="item">
 							<view class="acea-row row-middle row-between">
 								<!-- <i class="icon iconfont icon-shoujihao"></i> -->
 								<text class="item-name">{{$t(`分销员姓名`)}}</text>
@@ -112,20 +105,7 @@
 									@input="validateBtn" placeholder-class='placeholder' />
 							</view>
 						</view>
-						<view class="item rel">
-							<view class="acea-row row-middle">
-								<!-- <i class="icon iconfont icon-yanzhengma"></i> -->
-								<text class="item-name">{{$t(`验证码`)}}</text>
-								<input type="text" :placeholder="$t(`填写验证码`)" v-model="form.code"
-									@input="validateBtn" class="codeIput" placeholder-class='placeholder' />
-								<button class="code" :disabled="disabled" :class="disabled === true ? 'on' : ''"
-									@click="code">
-									{{ text }}
-								</button>
-						
-							</view>
-						</view>
-						<view class="item">
+					<view class="item">
 							<view class="acea-row row-middle row-between">
 								<!-- <i class="icon iconfont icon-shoujihao"></i> -->
 								<text class="item-name">{{$t(`申请理由`)}}</text>
