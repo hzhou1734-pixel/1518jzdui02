@@ -7,7 +7,14 @@
 					<image :src="orderInfo.status_pic"></image>
 				</view>
 				<view class="data" :class="isGoodsReturn ? 'on' : ''">
-					<view class="state">{{ orderInfo._status._msg }}</view>
+					<view class="state">
+						{{ orderInfo._status._msg }}
+						<text class="order-type-tag" v-if="orderInfo.type == 1">{{ $t(`秒杀`) }}</text>
+						<text class="order-type-tag" v-else-if="orderInfo.type == 2">{{ $t(`砍价`) }}</text>
+						<text class="order-type-tag" v-else-if="orderInfo.type == 3">{{ $t(`拼团`) }}</text>
+						<text class="order-type-tag" v-else-if="orderInfo.type == 4">{{ $t(`预售`) }}</text>
+						<text class="order-type-tag order-type-normal" v-else>{{ $t(`普通`) }}</text>
+					</view>
 					<view>
 						{{ orderInfo.add_time_y }}
 						<text class="time">{{ orderInfo.add_time_h }}</text>
@@ -1606,6 +1613,22 @@ export default {
 	margin-bottom: 7rpx;
 }
 
+.order-details .header .data .order-type-tag {
+	display: inline-block;
+	font-size: 22rpx;
+	font-weight: normal;
+	color: #fff;
+	background: rgba(255, 255, 255, 0.25);
+	border-radius: 6rpx;
+	padding: 2rpx 12rpx;
+	margin-left: 12rpx;
+	vertical-align: middle;
+}
+
+.order-details .header .data .order-type-normal {
+	background: rgba(255, 255, 255, 0.15);
+}
+
 .order-details .header .data .time {
 	margin-left: 20rpx;
 }
@@ -2102,6 +2125,22 @@ export default {
 	font-weight: bold;
 	color: #fff;
 	margin-bottom: 7rpx;
+}
+
+.order-details .header .data .order-type-tag {
+	display: inline-block;
+	font-size: 22rpx;
+	font-weight: normal;
+	color: #fff;
+	background: rgba(255, 255, 255, 0.25);
+	border-radius: 6rpx;
+	padding: 2rpx 12rpx;
+	margin-left: 12rpx;
+	vertical-align: middle;
+}
+
+.order-details .header .data .order-type-normal {
+	background: rgba(255, 255, 255, 0.15);
 }
 
 .order-details .header .data .time {
