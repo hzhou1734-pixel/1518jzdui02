@@ -237,7 +237,7 @@
 							</view>
 						</view>
 						<view v-if="!courseEvaluations.length" class="empty-page">
-							<image src="@/static/images/no_comment.png" mode=""></image>
+							<view class="empty-icon iconfont icon-pinglun"></view>
 							<view>{{ $t(`暂无课程评价`) }}</view>
 						</view>
 					</view>
