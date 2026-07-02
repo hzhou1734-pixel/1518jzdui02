@@ -69,6 +69,13 @@
 			</block>
 			<!-- 限时秒杀 -->
 			<seckill v-if="showSeckill" :dataConfig="defaultSeckillConfig"></seckill>
+			<!-- 推荐课程标题 -->
+			<view class="px-20 mt-30" v-if="!styleConfig.length">
+				<view class="flex align-center">
+					<view class="w-8 h-36 rd-4rpx bg--w111-E93323 mr-16"></view>
+					<text class="fs-32 font-bold" style="color: #333;">推荐课程</text>
+				</view>
+			</view>
 			<!-- 分类商品模块 -->
 				<!-- #ifndef  APP-PLUS -->
 				<view class="sort-product px-20" v-if="!styleConfig.length">
