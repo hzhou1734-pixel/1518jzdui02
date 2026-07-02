@@ -99,16 +99,6 @@
 							<!-- <view class="setting" @click="Setting"><text class="iconfont icon-shezhi"></text></view> -->
 							<!-- #endif -->
 						</view>
-						<view class="num-wrapper">
-							<view class="num-item" @click="goMenuPage('/pages/users/user_money/index')">
-								<text class="num">{{ userInfo.now_money || 0 }}</text>
-								<view class="txt">{{ $t('余额') }}</view>
-							</view>
-							<view class="num-item" @click="goMenuPage('/pages/users/user_coupon/index')">
-								<text class="num">{{ userInfo.couponCount || 0 }}</text>
-								<view class="txt">{{ $t('优惠券') }}</view>
-							</view>
-						</view>
 						<!-- <view class="sign" @click="goSignIn">签到</view> -->
 					</view>
 					<view class="order-wrapper height">
@@ -546,7 +536,7 @@
 					this.business_status = res.data.diy_data.business_status;
 					let storeMenu = [];
 					let myMenu = [];
-					const excludeMenus = ['积分中心', '砍价记录'];
+					const excludeMenus = ['积分中心', '砍价记录', '付费会员', '我的收藏'];
 					res.data.routine_my_menus.forEach((el, index, arr) => {
 						if (el.url == '/pages/admin/order/index' || el.url ==
 							'/pages/admin/order_cancellation/index' || el.name == '客服接待') {
