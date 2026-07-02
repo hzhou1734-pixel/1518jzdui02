@@ -50,8 +50,7 @@
 									<baseMoney class="mr-12 course-price" :money="realPriceData.real_price" symbolSize="24" integerSize="48" decimalSize="28" weight color="var(--view-theme)"></baseMoney>
 									<text class="course-ot-price">{{ $t(`￥`) }}{{ storeInfo.ot_price || 0 }}</text>
 								</view>
-								<view class="iconfont icon-fenxiang course-share-icon" @click="listenerActionSheet"></view>
-							</view>
+						</view>
 							<!-- 商品标签 -->
 							<view class="flex flex-wrap mt-24 p-x-15" v-if="storeInfo.label_list && storeInfo.label_list.length">
 								<BaseTag

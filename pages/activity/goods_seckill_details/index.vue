@@ -41,8 +41,7 @@
 					<view class="wrapper">
 						<view class="introduce course-title acea-row row-between">
 							<view class="infor">{{ storeInfo.title || '' }}</view>
-							<view class="iconfont icon-fenxiang course-share-icon" @click="listenerActionSheet"></view>
-						</view>
+					</view>
 						<view class="share acea-row row-between row-bottom course-price-wrap">
 							<view class="acea-row row-bottom">
 								<view class="course-price font-color">{{ $t(`￥`) }}<text class="price-num">{{ storeInfo.price || '' }}</text></view>
