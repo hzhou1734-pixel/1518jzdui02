@@ -60,29 +60,9 @@
 							{{$t(`点击管理`)}}<text class="iconfont icon-xiangyou"></text>
 						</view>
 					</view>
-					<!-- #endif -->
-					<!-- #ifdef H5 -->
-					<view class="item acea-row row-between-wrapper" v-if="userInfo.phone && !this.$wechat.isWeixin()">
-						<view>{{$t(`密码`)}}</view>
-						<navigator url="/pages/users/user_pwd_edit/index" hover-class="none" class="input">
-							{{$t(`点击修改密码`)}}<text class="iconfont icon-xiangyou"></text>
-						</navigator>
-					</view>
-					<!-- #endif -->
-					<view class="item acea-row row-between-wrapper" v-if="userInfo.phone">
-						<view>{{$t(`更换手机号码`)}}</view>
-						<navigator url="/pages/users/user_phone/index?type=1" hover-class="none" class="input">
-							{{$t(`点击更换手机号码`)}}<text class="iconfont icon-xiangyou"></text>
-						</navigator>
-					</view>
-					<!-- #ifdef APP-PLUS -->
-					<view class="item acea-row row-between-wrapper" v-if="userInfo.phone">
-						<view>{{$t(`密码`)}}</view>
-						<navigator url="/pages/users/user_pwd_edit/index" hover-class="none" class="input">
-							{{$t(`点击修改密码`)}}<text class="iconfont icon-xiangyou"></text>
-						</navigator>
-					</view>
-					<view class="item acea-row row-between-wrapper" @click="initData">
+			<!-- #endif -->
+		<!-- #ifdef APP-PLUS -->
+			<view class="item acea-row row-between-wrapper" @click="initData">
 						<view>{{$t(`缓存大小`)}}</view>
 						<view class="input">
 							{{fileSizeString}}<text class="iconfont icon-xiangyou"></text>
@@ -95,31 +75,10 @@
 						</view>
 					</view>
 					<!-- #endif -->
-					<view class="item acea-row row-between-wrapper" v-if="array.length">
-						<view>{{$t(`语言切换`)}}</view>
-						<view class="uni-list-cell-db">
-							<picker @change="bindPickerChange" range-key="name" :value="setIndex" :range="array">
-								<view class="uni-input input">{{array[setIndex].name}}<text
-										class="iconfont icon-xiangyou"></text></view>
-							</picker>
-						</view>
-					</view>
-					<view class="item acea-row row-between-wrapper">
-						<view>{{$t(`地址管理`)}}</view>
-						<navigator url="/pages/users/user_address_list/index" hover-class="none" class="input">
-							{{$t(`点击前往`)}}<text class="iconfont icon-xiangyou"></text>
-						</navigator>
-					</view>
 					<view class="item acea-row row-between-wrapper" v-if="userInfo.invioce_func">
 						<view>{{$t(`发票管理`)}}</view>
 						<navigator url="/pages/users/user_invoice_list/index" hover-class="none" class="input">
 							{{$t(`点击前往`)}}<text class="iconfont icon-xiangyou"></text>
-						</navigator>
-					</view>
-					<view class="item acea-row row-between-wrapper">
-						<view>{{$t(`账号注销`)}}</view>
-						<navigator url="/pages/users/user_cancellation/index" hover-class="none" class="input">
-							{{$t(`注销后无法恢复`)}}<text class="iconfont icon-xiangyou"></text>
 						</navigator>
 					</view>
 					<view class="item acea-row row-between-wrapper">
