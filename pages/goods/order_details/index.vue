@@ -314,20 +314,24 @@
 					<view v-else>{{ $t(`买家留言`) }}：</view>
 					<view class="conter">{{ orderInfo.mark }}</view>
 				</view>
-				<view class="item acea-row row-between" v-if="orderInfo.remark">
-					<view>{{ $t(`商家备注`) }}：</view>
-					<view class="conter">
-						{{ orderInfo.remark }}
-						<!-- #ifndef H5 -->
-						<view v-if="orderInfo.virtual_type == 1" class="copy" @tap="copy(orderInfo.remark)">{{ $t(`复制`) }}</view>
-						<!-- #endif -->
-						<!-- #ifdef H5 -->
-						<view v-if="orderInfo.virtual_type == 1" class="copy copy-data" :data-clipboard-text="orderInfo.remark">
-							{{ $t(`复制`) }}
-						</view>
-						<!-- #endif -->
-					</view>
+				<view class="item acea-row row-between" v-if="orderInfo.course_phone">
+					<view>{{ $t(`听课手机号`) }}：</view>
+					<view class="conter">{{ orderInfo.course_phone }}</view>
 				</view>
+			<view class="item acea-row row-between" v-if="orderInfo.remark">
+				<view>{{ $t(`商家备注`) }}：</view>
+				<view class="conter">
+					{{ orderInfo.remark }}
+					<!-- #ifndef H5 -->
+					<view v-if="orderInfo.virtual_type == 1" class="copy" @tap="copy(orderInfo.remark)">{{ $t(`复制`) }}</view>
+					<!-- #endif -->
+					<!-- #ifdef H5 -->
+					<view v-if="orderInfo.virtual_type == 1" class="copy copy-data" :data-clipboard-text="orderInfo.remark">
+						{{ $t(`复制`) }}
+					</view>
+					<!-- #endif -->
+				</view>
+			</view>
 			</view>
 			<view class="wrapper" v-if="customForm && customForm.length">
 				<view class="item acea-row row-between" v-for="(item, index) in customForm" :key="index">
