@@ -45,7 +45,7 @@
 						></productConSwiper>
 						<view class="wrapper">
 							<view class="share acea-row row-between row-bottom">
-								<view class="money font-color">
+							<view class="money font-color">
 								<text class="text">{{ $t(`到手价`) }}</text>
 								<baseMoney class="mr-12" :money="realPriceData.real_price" symbolSize="24" integerSize="40" decimalSize="24" weight color="var(--view-theme)"></baseMoney>
 							</view>
@@ -73,7 +73,6 @@
 									:key="idx"
 								></BaseTag>
 							</view>
-							<view v-if="!is_money_level && storeInfo.vip_price &&						</view>
 						<view class="presell_count" v-if="storeInfo.presale">
 								<view>
 									<view>{{ $t(`预售活动时间`) }}：</view>
@@ -101,9 +100,7 @@
 								</view>
 								<view class="iconfont icon-jiantou"></view>
 							</view>
-							<view class="coupon acea-row row-between-wrapper" v-if="activity.length">
-								<view class="line1 acea-row">
-											</view>
+					</view>
 						<view class="attribute acea-row row-between-wrapper" @click="selecAttr" v-if="attr.productAttr.length">
 							<view class="flex justify-between">
 								<view style="display: flex; align-items: center; width: 90%">
@@ -220,50 +217,43 @@
 						<!-- #endif -->
 					</view>
 				</view>
-				<!-- 课程评价信息 -->
-				<view class="course-evaluation" id="past4">
+				<!-- 课程评价 -->
+				<view class="product-intro" id="past4" v-if="courseEvaluations.length">
 					<view class="title">{{ $t(`课程评价`) }}</view>
 					<view class="conter">
-						<block v-if="courseEvaluations && courseEvaluations.length">
-							<view class="evaluation-item" v-for="(item, index) in courseEvaluations" :key="index">
+						<view class="evaluation-list">
+							<view class="eval-item" v-for="(item, index) in courseEvaluations" :key="index">
 								<view class="eval-header acea-row row-between-wrapper">
-									<view class="acea-row row-middle">
-										<image :src="item.avatar" class="avatar" mode="aspectFill"></image>
-										<view class="eval-user">
-											<text class="user-name">{{ item.nickname }}</text>
-											<text class="user-time">{{ item.add_time }}</text>
+									<view class="eval-user acea-row row-middle">
+										<image class="eval-avatar" :src="item.avatar" mode="aspectFill"></image>
+										<view>
+											<view class="eval-name">{{ item.nickname }}</view>
+											<view class="eval-time">{{ item.create_time }}</view>
 										</view>
 									</view>
-									<view class="eval-star">{{ item.star }}分</view>
+									<view class="eval-star">{{ item.star }} 分</view>
 								</view>
-								<view class="eval-content">{{ item.comment }}</view>
+								<view class="eval-content">{{ item.content }}</view>
 							</view>
-						</block>
-						<emptyPage v-else title="暂无评价，去学习吧～"></emptyPage>
+						</view>
+						<view v-if="!courseEvaluations.length" class="empty-page">
+							<image src="@/static/images/no_comment.png" mode=""></image>
+							<view>{{ $t(`暂无课程评价`) }}</view>
+						</view>
 					</view>
 				</view>
 				<!-- 课程大纲 -->
-				<view class="course-outline" id="past5">
+				<view class="product-intro" id="past5" v-if="courseOutline">
 					<view class="title">{{ $t(`课程大纲`) }}</view>
 					<view class="conter">
-						<!-- #ifndef APP-PLUS -->
 						<parser :html="courseOutline" ref="outlineParser" :tag-style="tagStyle"></parser>
-						<!-- #endif -->
-						<!-- #ifdef APP-PLUS -->
-						<view class="description" v-html="courseOutline"></view>
-						<!-- #endif -->
 					</view>
 				</view>
 				<!-- 授权老师 -->
-				<view class="auth-teacher" id="past6">
+				<view class="product-intro" id="past6" v-if="authTeacher">
 					<view class="title">{{ $t(`授权老师`) }}</view>
 					<view class="conter">
-						<!-- #ifndef APP-PLUS -->
 						<parser :html="authTeacher" ref="teacherParser" :tag-style="tagStyle"></parser>
-						<!-- #endif -->
-						<!-- #ifdef APP-PLUS -->
-						<view class="description" v-html="authTeacher"></view>
-						<!-- #endif -->
 					</view>
 				</view>
 				<view class="uni-p-b-98"></view>
@@ -271,47 +261,23 @@
 			</view>
 
 			<view class="footer acea-row row-between-wrapper" :class="{ eject: storeInfo.id }">
-				<navigator v-if="!is_gift" hover-class="none" class="item" open-type="switchTab" url="/pages/index/index">
-					<view class="iconfont icon-shouye6"></view>
-					<view class="p_center">{{ $t(`首页`) }}</view>
-				</navigator>
-				<view v-if="noGoods" class="presale">
-					<view class="acea-row">
-						<form class="bnts bg-color-hui">
-							<button class="bnts bg-color-hui" form-type="submit">{{ $t(`暂无产品`) }}</button>
-						</form>
-					</view>
-				</view>
-				<view v-else>
-					<view v-if="!storeInfo.presale">
-						<view class="bnt acea-row" :class="attr.productSelect.stock <= 0 ? 'virbnt' : ''">
-							<form v-if="attr.productSelect.stock <= 0" class="buy bnts bg-color-hui">
-								<button class="buy bnts bg-color-hui" form-type="submit">{{ $t(`已售罄`) }}</button>
-							</form>
-							<form v-else @submit="goBuy" class="buy bnts">
-								<button class="buy bnts" form-type="submit">{{ $t(`立即购买`) }}</button>
-							</form>
-						</view>
-					</view>
-					<view class="presale" v-else>
-						<view class="acea-row" v-if="presale_pay_status === 1 || presale_pay_status === 3">
-							<form class="bnts bg-color-hui">
-								<button class="bnts bg-color-hui" form-type="submit">{{ presale_pay_status === 1 ? $t(`未开始`) : $t(`已结束`) }}</button>
-							</form>
-						</view>
-						<view class="acea-row" v-else-if="attr.productSelect.quota <= 0 || attr.productSelect.quota < attr.productSelect.cart_num">
-							<form class="bnts bg-color-hui">
-								<button class="bnts bg-color-hui" form-type="submit">{{ $t(`已售罄`) }}</button>
-							</form>
-						</view>
-						<view class="bnts acea-row" v-else-if="presale_pay_status === 2">
-							<form @submit="goBuy" class="bnts">
-								<button class="bnts" form-type="submit">{{ $t(`立即购买`) }}</button>
-							</form>
-						</view>
-					</view>
+			<navigator v-if="!is_gift" hover-class="none" class="item" open-type="switchTab" url="/pages/index/index">
+				<view class="iconfont icon-shouye6"></view>
+				<view class="p_center">{{ $t(`首页`) }}</view>
+			</navigator>
+			<view v-if="noGoods" class="presale">
+				<view class="acea-row">
+					<form class="bnts bg-color-hui">
+						<button class="bnts bg-color-hui" form-type="submit">{{ $t(`暂无产品`) }}</button>
+					</form>
 				</view>
 			</view>
+			<view v-else class="buy-btn-wrap">
+				<form @submit="goBuy" class="buy bnts">
+					<button class="buy bnts" form-type="submit">{{ $t(`立即购买`) }}</button>
+				</form>
+			</view>
+		</view>
 			<shareRedPackets
 				:sharePacket="sharePacket"
 				@listenerActionSheet="listenerActionSheet"
@@ -574,7 +540,7 @@ export default {
 				video: 'width:100%;height:100%;'
 			},
 			returnShow: true, //判断顶部返回是否出现
-			courseEvaluations: [], // 课程评价列表
+			courseEvaluations: [], // 课程评价
 			courseOutline: '', // 课程大纲（富文本）
 			authTeacher: '', // 授权老师（富文本）
 			diff: '',
@@ -1043,22 +1009,15 @@ export default {
 							});
 					}
 					that.$set(that, 'storeInfo', storeInfo);
-					that.$set(that, 'description', storeInfo.description);
-					if (this.description) {
-						this.description = this.description.replace(/<img/gi, '<img style="max-width:100%;height:auto;float:left;display:block" ');
-						this.description = this.description.replace(/<video/gi, '<video style="width:100%;height:300px;display:block" ');
-					}				}
-				// 课程数据
+				that.$set(that, 'description', storeInfo.description);
 				that.$set(that, 'courseEvaluations', res.data.course_evaluations || []);
 				that.$set(that, 'courseOutline', res.data.course_outline || '');
 				that.$set(that, 'authTeacher', res.data.auth_teacher || '');
-				if (that.courseOutline) {
-					that.courseOutline = that.courseOutline.replace(/<img/gi, '<img style="max-width:100%;height:auto;float:left;display:block" ');
-				}
-				if (that.authTeacher) {
-					that.authTeacher = that.authTeacher.replace(/<img/gi, '<img style="max-width:100%;height:auto;float:left;display:block" ');
-				}
-				that.$set(that, 'presale_pay_status', res.data.storeInfo.presale_pay_status); // 1未开始; 2进行中; 3已结束
+				if (this.description) {
+						this.description = this.description.replace(/<img/gi, '<img style="max-width:100%;height:auto;float:left;display:block" ');
+						this.description = this.description.replace(/<video/gi, '<video style="width:100%;height:300px;display:block" ');
+					}
+					that.$set(that, 'presale_pay_status', res.data.storeInfo.presale_pay_status); // 1未开始; 2进行中; 3已结束
 					that.$set(that, 'reply', res.data.reply ? [res.data.reply] : []);
 					that.$set(that, 'replyCount', res.data.replyCount);
 					that.$set(that, 'replyChance', res.data.replyChance);
@@ -1093,7 +1052,14 @@ export default {
 					}
 					this.$set(this, 'selectSku', that.skuArr[0]);
 					that.$set(that, 'diff', that.$util.$h.Sub(storeInfo.price, storeInfo.vip_price));
-					var navList = [that.$t(`商品`), that.$t(`评价`), that.$t(`大纲`), that.$t(`老师`), that.$t(`详情`)];
+		var navList = [that.$t(`商品`)]; // past0
+		if (res.data.replyCount) navList.push(that.$t(`评价`)); // past1 用户评价
+		if (goodArray.length) navList.push(that.$t(`推荐`)); // past2
+		navList.push(that.$t(`详情`)); // past3 产品介绍
+		if (res.data.course_evaluations && res.data.course_evaluations.length) navList.push(that.$t(`课程评价`)); // past4
+		if (res.data.course_outline) navList.push(that.$t(`大纲`)); // past5
+		if (res.data.auth_teacher) navList.push(that.$t(`老师`)); // past6
+		that.$set(that, 'navList', navList);
 					// if (goodArray.length) {
 					// 	navList.splice(-1, 0, '推荐');
 					// }
@@ -1156,20 +1122,12 @@ export default {
 				});
 		},
 		infoScroll: function () {
-			var that = this,
+				var that = this,
 				topArr = [],
 				heightArr = [];
-			// 导航映射: 商品→past0, 评价→past1/课程评价past4, 大纲→past5, 老师→past6, 详情→past3
-			var pastIds = [
-				'past0',
-				that.replyCount ? 'past1' : 'past4',
-				'past5',
-				'past6',
-				'past3'
-			];
 			for (var i = 0; i < that.navList.length; i++) {
 				var query = uni.createSelectorQuery().in(this);
-				var idView = '#' + pastIds[i];
+				var idView = '#past' + i;
 				query.select(idView).boundingClientRect();
 				query.exec(function (res) {
 					var top = res[0].top;
@@ -1828,21 +1786,28 @@ export default {
 }
 
 .product-con .footer .bnt {
-	flex: 1;
+	width: 444rpx;
 	height: 76rpx;
 }
 
 .product-con .footer .bnt .bnts {
-	width: 100%;
+	width: 222rpx;
 	text-align: center;
 	line-height: 76rpx;
 	color: #fff;
 	font-size: 28rpx;
 }
 
+.product-con .footer .bnt .joinCart {
+	border-radius: 50rpx 0 0 50rpx;
+	background-color: var(--view-bntColor);
+	// background-image: linear-gradient(to right, #fea10f 0%, #fa8013 100%);
+}
+
 .product-con .footer .bnt .buy {
-	border-radius: 50rpx;
+	border-radius: 0 50rpx 50rpx 0;
 	background-color: var(--view-theme);
+	// background-image: linear-gradient(to right, #fa6514 0%, #e93323 100%);
 }
 
 .product-con .store-info {
@@ -2414,71 +2379,90 @@ action-sheet-item {
 	text-decoration: line-through;
 }
 
-/* 课程详情新增板块 */
-.product-con .course-evaluation,
-.product-con .course-outline,
-.product-con .auth-teacher {
-	background-color: #fff;
-	margin-top: 20rpx;
+/* 底部购买按钮 */
+.footer .buy-btn-wrap {
+	flex: 1;
+	padding: 0 20rpx;
 }
 
-.product-con .course-evaluation .title,
-.product-con .course-outline .title,
-.product-con .auth-teacher .title {
-	padding: 24rpx 30rpx;
-	font-size: 30rpx;
+.footer .buy-btn-wrap .bnts {
+	flex: 1;
+	height: 76rpx;
+	border-radius: 50rpx;
+	background: linear-gradient(135deg, #E93323, #FF7931);
+	text-align: center;
+	line-height: 76rpx;
+	color: #fff;
+	font-size: 28rpx;
 	font-weight: bold;
-	color: #333;
-	border-bottom: 1rpx solid #f5f5f5;
 }
 
-.product-con .course-evaluation .conter,
-.product-con .course-outline .conter,
-.product-con .auth-teacher .conter {
-	padding: 24rpx 30rpx;
+/* 课程评价 */
+.evaluation-list {
+	padding: 0 20rpx;
 }
 
-.product-con .evaluation-item {
-	padding: 20rpx 0;
-	border-bottom: 1rpx solid #f5f5f5;
+.eval-item {
+	padding: 24rpx 0;
+	border-bottom: 1rpx solid #f0f0f0;
 }
 
-.product-con .evaluation-item:last-child {
+.eval-item:last-child {
 	border-bottom: none;
 }
 
-.product-con .eval-header .avatar {
+.eval-header {
+	margin-bottom: 12rpx;
+}
+
+.eval-user {
+	flex: 1;
+}
+
+.eval-avatar {
 	width: 64rpx;
 	height: 64rpx;
 	border-radius: 50%;
 	margin-right: 16rpx;
+	background: #f5f5f5;
 }
 
-.product-con .eval-user {
-	display: flex;
-	flex-direction: column;
-}
-
-.product-con .eval-user .user-name {
-	font-size: 28rpx;
+.eval-name {
+	font-size: 26rpx;
 	color: #333;
+	font-weight: 500;
 }
 
-.product-con .eval-user .user-time {
+.eval-time {
 	font-size: 22rpx;
 	color: #999;
 	margin-top: 4rpx;
 }
 
-.product-con .eval-star {
-	font-size: 26rpx;
+.eval-star {
+	font-size: 24rpx;
 	color: #E93323;
 }
 
-.product-con .eval-content {
+.eval-content {
 	font-size: 26rpx;
 	color: #666;
 	line-height: 1.6;
-	margin-top: 16rpx;
+}
+
+.empty-page {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 60rpx 0;
+	color: #999;
+	font-size: 26rpx;
+}
+
+.empty-page image {
+	width: 200rpx;
+	height: 200rpx;
+	margin-bottom: 20rpx;
 }
 </style>
