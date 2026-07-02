@@ -87,14 +87,6 @@
 									<view class="iconfont icon-shezhi"></view>
 								</navigator>
 							</view>
-							<view class="message">
-								<navigator v-if="isLogin" url="/pages/users/message_center/index" hover-class="none">
-									<view v-if="userInfo.service_num" class="num">
-										{{ userInfo.service_num >= 100 ? '99+' : userInfo.service_num }}
-									</view>
-									<view class="iconfont icon-s-kefu"></view>
-								</navigator>
-							</view>
 							<!-- #ifdef MP -->
 							<!-- <view class="setting" @click="Setting"><text class="iconfont icon-shezhi"></text></view> -->
 							<!-- #endif -->
